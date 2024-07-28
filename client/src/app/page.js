@@ -8,9 +8,11 @@ export default function Home() {
             <Navbar />
             <div className="min-h-screen">
                 {/*other component goes here*/}
-                <div className="">
+                <div className="md:hidden lg:hidden">
+                    {/* slider for mobile device only */}
                     <ImageSlider />
                 </div>
+                {/* slider for tab and computer */}
             </div>
             <DownNavbar />
         </div>

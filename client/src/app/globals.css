@@ -3,6 +3,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* custom styles */
+.no-select {
+    -webkit-user-select: none; /* Chrome, Safari, Opera */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+}
+/* styles.css or in a <style jsx> block */
+.cursor-grab {
+    cursor: grab;
+}
+.cursor-grabbing {
+    cursor: grabbing;
+}
+
 /* Custom scrollbar styles for WebKit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
     width: 12px;

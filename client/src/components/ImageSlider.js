@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useSwipeable } from "react-swipeable";
 
 const ImageSlider = () => {
     let data = [
@@ -74,117 +75,150 @@ const ImageSlider = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setIndex((prevIndex) => (prevIndex + 1) % data.length);
+            setIndex((prevIndex) => (prevIndex + 1) % getImage.length);
         }, 3000);
         return () => clearInterval(interval);
-    }, [data.length]);
+    }, [index, getImage.length]);
+
+    const getIndex = useCallback(
+        (offset) => (index + offset + getImage.length) % getImage.length,
+        [index, getImage.length]
+    );
+
+    const handleImageError = (e) => {
+        e.target.src = "/error/fallback.png";
+    };
+
+    const handleSwipedLeft = () => {
+        setIndex((prevIndex) => (prevIndex + 1) % getImage.length);
+    };
+
+    const handleSwipedRight = () => {
+        setIndex(
+            (prevIndex) => (prevIndex - 1 + getImage.length) % getImage.length
+        );
+    };
+
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: handleSwipedLeft,
+        onSwipedRight: handleSwipedRight,
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true,
+    });
 
     return (
-        <div className="mt-3 overflow-hidden">
+        <div className="mt-3 overflow-hidden no-select" {...swipeHandlers}>
             <div className="container mx-auto flex items-center justify-center flex-col">
                 <div className="w-full">
                     <div className=" ">
-                        <div className=" w-full flex gap-5 items-center justify-between">
-                            <div className="w-32 -ml-16 ">
+                        <div className="w-full flex gap-5 items-center justify-between">
+                            <div className="w-32 -ml-16 hidden lg:block">
                                 <Image
-                                    key={index - 3}
-                                    src={
-                                        getImage[
-                                            index === 0
-                                                ? getImage.length - 1
-                                                : index - 3
-                                        ].image
+                                    draggable="false"
+                                    onError={handleImageError}
+                                    key={getIndex(-3)}
+                                    src={getImage[getIndex(-3)].image}
+                                    alt={
+                                        getImage[getIndex(-3)].alt ||
+                                        "Previous Image"
                                     }
-                                    alt="previous"
                                     width={200}
                                     height={200}
+                                    placeholder="blur"
+                                    blurDataURL="/error/blur.png"
                                 />
                             </div>
-                            <div className="w-32 -ml-16 ">
+                            <div className="w-32 -ml-16 hidden sm:block md:block lg:block">
                                 <Image
-                                    key={index - 2}
-                                    src={
-                                        getImage[
-                                            index === 0
-                                                ? getImage.length - 1
-                                                : index - 2
-                                        ].image
+                                    draggable="false"
+                                    onError={handleImageError}
+                                    key={getIndex(-2)}
+                                    src={getImage[getIndex(-2)].image}
+                                    alt={
+                                        getImage[getIndex(-2)].alt ||
+                                        "Previous Image"
                                     }
-                                    alt="previous"
                                     width={200}
                                     height={200}
+                                    placeholder="blur"
+                                    blurDataURL="/error/blur.png"
                                 />
                             </div>
-                            <div className="w-32 -ml-16 ">
+                            <div className="w-32 -ml-16">
                                 <Image
-                                    key={index - 1}
-                                    src={
-                                        getImage[
-                                            index === 0
-                                                ? getImage.length - 1
-                                                : index - 1
-                                        ].image
+                                    draggable="false"
+                                    onError={handleImageError}
+                                    key={getIndex(-1)}
+                                    src={getImage[getIndex(-1)].image}
+                                    alt={
+                                        getImage[getIndex(-1)].alt ||
+                                        "Previous Image"
                                     }
-                                    alt="previous"
                                     width={200}
                                     height={200}
+                                    placeholder="blur"
+                                    blurDataURL="/error/blur.png"
                                 />
                             </div>
                             <div className="w-48 h-72 relative">
                                 <Image
+                                    draggable="false"
+                                    onError={handleImageError}
                                     key={index}
                                     src={getImage[index].image}
-                                    alt="current"
-                                    // width={500}
-                                    // height={500}
-                                    // style={{ objectFit: "cover" }}
+                                    alt={getImage[index].alt || "Current Image"}
                                     layout="fill"
                                     objectFit="cover"
+                                    placeholder="blur"
+                                    blurDataURL="/error/blur.png"
                                 />
                             </div>
                             <div className="w-32 -mr-16">
                                 <Image
-                                    key={index + 1}
-                                    src={
-                                        getImage[
-                                            index === getImage.length - 1
-                                                ? 0
-                                                : index + 1
-                                        ].image
+                                    draggable="false"
+                                    onError={handleImageError}
+                                    key={getIndex(1)}
+                                    src={getImage[getIndex(1)].image}
+                                    alt={
+                                        getImage[getIndex(1)].alt ||
+                                        "Next Image"
                                     }
-                                    alt="next"
                                     width={200}
                                     height={200}
+                                    placeholder="blur"
+                                    blurDataURL="/error/blur.png"
                                 />
                             </div>
-                            <div className="w-32 -mr-16">
+                            <div className="w-32 -mr-16 hidden sm:block md:block lg:block">
                                 <Image
-                                    key={index + 2}
-                                    src={
-                                        getImage[
-                                            index === getImage.length - 1
-                                                ? 0
-                                                : index + 2
-                                        ].image
+                                    draggable="false"
+                                    onError={handleImageError}
+                                    key={getIndex(2)}
+                                    src={getImage[getIndex(2)].image}
+                                    alt={
+                                        getImage[getIndex(2)].alt ||
+                                        "Next Image"
                                     }
-                                    alt="next"
                                     width={200}
                                     height={200}
+                                    placeholder="blur"
+                                    blurDataURL="/error/blur.png"
                                 />
                             </div>
-                            <div className="w-32 -mr-16">
+                            <div className="w-32 -mr-16 hidden lg:block">
                                 <Image
-                                    key={index + 3}
-                                    src={
-                                        getImage[
-                                            index === getImage.length - 1
-                                                ? 0
-                                                : index + 3
-                                        ].image
+                                    draggable="false"
+                                    onError={handleImageError}
+                                    key={getIndex(3)}
+                                    src={getImage[getIndex(3)].image}
+                                    alt={
+                                        getImage[getIndex(3)].alt ||
+                                        "Next Image"
                                     }
-                                    alt="next"
                                     width={200}
                                     height={200}
+                                    placeholder="blur"
+                                    blurDataURL="/error/blur.png"
                                 />
                             </div>
                         </div>
@@ -194,43 +228,27 @@ const ImageSlider = () => {
                     <div className="">
                         <div className="w-full mt-3 mb-0 flex items-center justify-center flex-col">
                             <h1 className="text-2xl capitalize">
-                                {[0].map(() => {
-                                    return getImage[index].title;
-                                })}
+                                {getImage[index].title.length > 24
+                                    ? `${getImage[index].title.slice(0, 23)}...`
+                                    : getImage[index].title}
                             </h1>
                         </div>
                         <div className="flex gap-5 items-center justify-center text-sm">
                             <div className="flex items-center justify-center">
                                 <p className="pr-2 capitalize">
-                                    {[0].map(() => {
-                                        return getImage[index].type;
-                                    })}
+                                    {getImage[index].type}
                                 </p>
                                 -
                             </div>
 
                             <div className="mt-1 mb-1">
-                                <p>
-                                    {[0].map(() => {
-                                        return getImage[index].genre;
-                                    })}
-                                </p>
+                                <p>{getImage[index].genre}</p>
                             </div>
                         </div>
                         <div className="flex items-center justify-center mt-1 mb-2 text-sm">
-                            <p>
-                                Rank:{" "}
-                                {[0].map(() => {
-                                    return getImage[index].rank;
-                                })}
-                            </p>{" "}
+                            <p>Rank: {getImage[index].rank}</p>
                             <span className="mx-3">-</span>
-                            <p>
-                                Total Chap:{" "}
-                                {[0].map(() => {
-                                    return getImage[index].totalCahpter;
-                                })}
-                            </p>
+                            <p>Total Chap: {getImage[index].totalCahpter}</p>
                         </div>
                     </div>
                     <Link href="">
