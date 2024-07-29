@@ -1,0 +1,8 @@
+1. ei code babohar kore korte hobe ekhon theke. eti div er height ar width babohar kore aspect ratio thik rekhe just bottom crop kore
+code:- <Image
+                    src={image}
+                    layout="fill"
+                    objectFit="cover"
+                    objectPosition="top"
+                    alt={title}
+                />

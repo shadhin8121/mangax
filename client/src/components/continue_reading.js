@@ -1,4 +1,5 @@
 import React from "react";
+import Continue_reading_card from "./continue_reading_card";
 
 const Continue_reading = () => {
     const data = [
@@ -9,7 +10,7 @@ const Continue_reading = () => {
             type: "manhwa",
             genre: "action, magic",
             rank: 1,
-            totalCahpter: 253,
+            totalChapter: 253,
         },
         {
             title: "jujutsu kaisen",
@@ -18,7 +19,7 @@ const Continue_reading = () => {
             type: "manga",
             genre: "action, horror ,demons",
             rank: 2,
-            totalCahpter: 233,
+            totalChapter: 233,
         },
         {
             title: "mount hua sect",
@@ -27,7 +28,7 @@ const Continue_reading = () => {
             type: "manhwa",
             genre: "action, martial arts, fantasy",
             rank: 3,
-            totalCahpter: 353,
+            totalChapter: 353,
         },
         {
             title: "The Greatest Estate Developer",
@@ -36,7 +37,7 @@ const Continue_reading = () => {
             type: "manhwa",
             genre: "action, magic, fantasy",
             rank: 4,
-            totalCahpter: 153,
+            totalChapter: 153,
         },
         {
             title: "the archmage's resturant",
@@ -45,7 +46,7 @@ const Continue_reading = () => {
             type: "manhwa",
             genre: "action, magic, fantasy",
             rank: 5,
-            totalCahpter: 3344,
+            totalChapter: 3344,
         },
         {
             title: "The Martial God Who Regressed Back to Level 2",
@@ -54,7 +55,7 @@ const Continue_reading = () => {
             type: "manhwa",
             genre: "action, martial arts, magic",
             rank: 6,
-            totalCahpter: 353,
+            totalChapter: 353,
         },
         {
             title: "Ending maker",
@@ -63,10 +64,71 @@ const Continue_reading = () => {
             type: "manhwa",
             genre: "action, martial arts, magic, fantasy",
             rank: 7,
-            totalCahpter: 3533,
+            totalChapter: 3533,
+        },
+        {
+            title: "The Begining after the end",
+            image: "/testing/1.jpg",
+            alt: "The begining after the end",
+            type: "manhwa",
+            genre: "action, magic",
+            rank: 1,
+            totalChapter: 253,
+        },
+        {
+            title: "jujutsu kaisen",
+            image: "/testing/2.jpg",
+            alt: "jujutsu kaisen",
+            type: "manga",
+            genre: "action, horror ,demons",
+            rank: 2,
+            totalChapter: 233,
+        },
+        {
+            title: "mount hua sect",
+            image: "/testing/3.jpg",
+            alt: "mount hua sect",
+            type: "manhwa",
+            genre: "action, martial arts, fantasy",
+            rank: 3,
+            totalChapter: 353,
+        },
+        {
+            title: "The Greatest Estate Developer",
+            image: "/testing/4.jpg",
+            alt: "The Greatest Estate Developer",
+            type: "manhwa",
+            genre: "action, magic, fantasy",
+            rank: 4,
+            totalChapter: 153,
+        },
+        {
+            title: "the archmage's resturant",
+            image: "/testing/5.jpg",
+            alt: "the archmage's resturant",
+            type: "manhwa",
+            genre: "action, magic, fantasy",
+            rank: 5,
+            totalChapter: 3344,
         },
     ];
-    return <div>Continue_reading</div>;
+
+    return (
+        <div className="flex gap-3 max-w-[1000px] mx-auto">
+            {data.map((item, index) => (
+                <Continue_reading_card
+                    key={index}
+                    title={item.title}
+                    image={item.image}
+                    alt={item.alt}
+                    type={item.type}
+                    genre={item.genre}
+                    rank={item.rank}
+                    totalChapter={item.totalChapter}
+                />
+            ))}
+        </div>
+    );
 };
 
 export default Continue_reading;
