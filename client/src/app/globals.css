@@ -3,6 +3,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* scroll none for Following Component  */
+
+.custom-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.custom-scroll {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
 /* custom styles */
 .no-select {
     -webkit-user-select: none; /* Chrome, Safari, Opera */
@@ -17,6 +28,8 @@
 .cursor-grabbing {
     cursor: grabbing;
 }
+
+/* -------------------------------------- */
 
 /* Custom scrollbar styles for WebKit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
