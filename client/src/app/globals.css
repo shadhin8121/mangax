@@ -15,6 +15,9 @@
 }
 
 /* custom styles */
+.navigation-wrapper {
+}
+
 .no-select {
     -webkit-user-select: none; /* Chrome, Safari, Opera */
     -moz-user-select: none; /* Firefox */

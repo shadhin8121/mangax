@@ -15,7 +15,7 @@ const Navbar = () => {
 
     return (
         <div className="border-b-4 border-gray-300 dark:border-gray-700 shadow-md dark:bg-slate-800">
-            <div className="flex flex-wrap items-center justify-between container mx-auto py-1 px-4 sm:px-6">
+            <div className="flex flex-wrap items-center justify-between w-[100%] mx-auto py-1 sm:px-6">
                 <div className="w-20 sm:w-24 cursor-pointer flex items-center">
                     <Image
                         src="/images/clogo11.png"
@@ -36,7 +36,7 @@ const Navbar = () => {
                     </button>
                 </div>
                 <Link href={paths}>
-                    <div className="flex items-center rounded-full overflow-hidden cursor-pointer ml-4">
+                    <div className="flex items-center rounded-full overflow-hidden cursor-pointer ml-4 pr-3">
                         <UpNavbarProfile />
                     </div>
                 </Link>
