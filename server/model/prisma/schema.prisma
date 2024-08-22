@@ -20,3 +20,14 @@ model user {
   password   String
   created_at DateTime @default(now())
 }
+
+model translator {
+  id               String   @id @default(uuid())
+  username         String   @unique
+  email            String   @unique
+  password         String
+  website          String
+  translator_group String
+  discord          String
+  created_at       DateTime @default(now())
+}
