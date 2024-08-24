@@ -4,7 +4,7 @@ const {
     getUserInfo,
     makeAnAccount,
     authenticateToken,
-} = require("../controller/user.controller");
+} = require("../controller/auth_user.controller");
 const user_router = express.Router();
 
 

@@ -93,15 +93,21 @@ async function login_translator(req, res) {
         let secret_key = process.env.SECRET_KEY_FOR_JWT;
 
         // Token options (expiration time, etc.)
+        let expireInSeconds = 15 * 24 * 60 * 60; // 15 days in seconds
         const options = {
-            expiresIn: "1d",
+            expiresIn: expireInSeconds,
         };
 
         let token = jwt.sign(payload, secret_key, options);
 
         // Set the cookie and respond to the client
         res.status(200)
-            .cookie("token", token, { httpOnly: true, secure: true })
+            .cookie("token", token, {
+                httpOnly: true,
+                sameSite: "Strict",
+                secure: true,
+                maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
+            })
             .json({
                 success: true,
                 data: "User logged in successfully",
