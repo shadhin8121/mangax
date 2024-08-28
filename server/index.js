@@ -4,7 +4,7 @@ const user_router = require("./route/auth_user.route.js");
 const cors = require("cors");
 const cookieParser = require("cookie-parser"); // Add this line
 const translator_group_router = require("./route/auth_translator_group.route.js");
-const translator_profile_router = require("./route/translator_profile.route.js");
+const translator_data_router = require("./route/translator_data.route.js");
 
 // Basic code
 const app = express();
@@ -24,13 +24,13 @@ const corsOptions = {
     ], // Add other origins as needed
     credentials: true,
 };
-
+//cors origin sites
 app.use(cors(corsOptions));
 
 // Middleware routes
 app.use(user_router);
 app.use(translator_group_router);
-app.use(translator_profile_router);
+app.use(translator_data_router);
 
 app.listen(port, () => {
     console.log(`server is running on port ${port}`);

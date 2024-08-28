@@ -34,6 +34,14 @@ async function translator_profile_data(req, res) {
     }
 }
 
+async function translator_create_new_manga(req, res) {
+    let data = req.body;
+    //req.file.path provides path of the image
+    console.log(data);
+    res.send(data);
+}
+
 module.exports = {
     translator_profile_data,
+    translator_create_new_manga,
 };

@@ -31,3 +31,17 @@ model translator {
   discord          String
   created_at       DateTime @default(now())
 }
+
+model manga_data {
+  id                 String   @id @default(uuid())
+  cover_image        String
+  title              String
+  alternative_titles String[]
+  description        String
+  type               String
+  status             String
+  artists            String[]
+  authors            String[]
+  genres             String[]
+  publishers         String[]
+}

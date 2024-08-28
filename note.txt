@@ -1,0 +1,18 @@
+ {
+  title: 'sfawe',
+  altTitle: [ 'sdfawef', 'afwaefw', 'afwefaw' ],
+  description: 'aefawef',
+  type: 'manga',
+  status: 'ongoing',
+  artist: [ 'fawefawefawe', 'afeafea' ],
+  author: [ 'aefawef', 'afawef' ],  genres: [
+    'Action',
+    'Slice of Life',
+    'Romance',
+    'Sports',
+    'Thriller',
+    'Music',
+    'Yaoi'
+  ],
+  publisher: [ 'faewfawefawe', 'fawefawef', 'dfarhaera' ]
+}
