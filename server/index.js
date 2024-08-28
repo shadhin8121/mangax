@@ -2,16 +2,20 @@ const express = require("express");
 require("dotenv").config();
 const user_router = require("./route/auth_user.route.js");
 const cors = require("cors");
+const cookieParser = require("cookie-parser"); // Add this line
 const translator_group_router = require("./route/auth_translator_group.route.js");
+const translator_profile_router = require("./route/translator_profile.route.js");
 
-//basic code
+// Basic code
 const app = express();
 const port = process.env.PORT || 4053;
-//basic middleware
+
+// Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); // Add this line
 
-//credentials
+// Credentials
 const corsOptions = {
     origin: [
         "http://localhost:3000",
@@ -22,9 +26,11 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-//middleware routes
+
+// Middleware routes
 app.use(user_router);
 app.use(translator_group_router);
+app.use(translator_profile_router);
 
 app.listen(port, () => {
     console.log(`server is running on port ${port}`);

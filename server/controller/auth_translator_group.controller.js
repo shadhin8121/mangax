@@ -6,6 +6,8 @@ const prisma = new PrismaClient();
 
 // Salting round
 const saltingRound = 15;
+// true if cookie can be send without https or false
+const isProduction = process.env.IS_PRODUCTION === "production";
 
 // Registering Translator
 async function register_translator(req, res) {
@@ -103,10 +105,10 @@ async function login_translator(req, res) {
         // Set the cookie and respond to the client
         res.status(200)
             .cookie("token", token, {
-                httpOnly: true,
-                sameSite: "Strict",
-                secure: true,
-                maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
+                httpOnly: isProduction, // Enabled in production for security
+                sameSite: isProduction ? "Strict" : "Lax", // Lax might be more lenient during development
+                secure: isProduction, // Only enabled in production
+                maxAge: 15 * 24 * 60 * 60 * 1000,
             })
             .json({
                 success: true,
@@ -144,9 +146,7 @@ async function authenticate_user(req, res, next) {
         next();
     } catch (err) {
         // If token verification fails, deny access
-        return res
-            .status(401)
-            .json({ success: false, message: "Invalid token." });
+        return res.status(401).json({ success: false, message: err.message });
     }
 }
 

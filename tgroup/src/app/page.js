@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const mangaData = [
     { id: 1, title: "Title 1", image: "/testing/1.jpg" },
@@ -11,9 +12,29 @@ const mangaData = [
 ];
 
 export default function Home() {
+    let [login, setLogin] = useState(false);
+    let [loading, setLoading] = useState(true);
     let router = useRouter();
 
-    function sendToComicId(id, title) {
+    useEffect(() => {
+        const localStorageData = localStorage.getItem("login");
+        if (localStorageData === "true") {
+            setLogin(true);
+        } else {
+            router.push("/login");
+        }
+        setLoading(false);
+    }, [router]);
+
+    if (loading) {
+        return <div>Loading...</div>; // Show loading state while checking login status
+    }
+
+    if (!login) {
+        return null; // Prevent rendering the page content if not logged in
+    }
+
+    function sendToComicId(id) {
         router.push(`/${id}`);
     }
 

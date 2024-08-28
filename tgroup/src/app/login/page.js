@@ -1,14 +1,19 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import notify_success, { notify_error } from "@/utility/notify";
 
 const Page = () => {
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, isLoading] = useState(false);
     const base_url = "http://localhost:4043/login_translator";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            isLoading(true);
             const response = await fetch(base_url, {
                 method: "POST",
                 headers: {
@@ -20,7 +25,19 @@ const Page = () => {
 
             const data = await response.json();
             console.log(data);
+
+            if (data.success) {
+                //set in local storage: login=true
+                localStorage.setItem("login", "true");
+                notify_success("logged in successfully");
+                router.push("/");
+            } else {
+                notify_error(data.message);
+            }
+            isLoading(false);
         } catch (error) {
+            isLoading(false);
+            notify_error(error.message);
             console.error("Error:", error);
         }
     };
@@ -55,7 +72,7 @@ const Page = () => {
                             type="submit"
                             className="w-full py-2 px-4 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            Login
+                            {loading ? "Submitting..." : "Login"}
                         </button>
                     </div>
                 </form>
