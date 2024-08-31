@@ -7,21 +7,40 @@ const Page = () => {
     const router = useRouter();
 
     //base url
-    const base_url = "http://localhost:4043/translator_profile_data"; // Added http://
+    const base_url = "http://localhost:4043/translator_profile_data";
+
+    //logout url
+    const logout_url = "http://localhost:4043/logout_translator";
 
     //useState hook for data
     let [data, setData] = useState({});
 
     //logout function
-    const handleLogout = () => {
-        // Remove login=true from localStorage
-        localStorage.removeItem("login");
+    const handleLogout = async () => {
+        try {
+            // Send POST request to the logout URL
+            let response = await fetch(logout_url, {
+                method: "POST",
+                credentials: "include",
+            });
 
-        //toast
-        notify_success("Logged out successfully");
+            if (response.ok) {
+                // Remove login=true from localStorage
+                localStorage.removeItem("login");
 
-        // Redirect to the login page
-        router.push("/login");
+                // Notify success
+                notify_success("Logged out successfully");
+
+                // Redirect to the login page
+                router.push("/login");
+            } else {
+                notify_error("Logout failed");
+                console.error("Logout failed");
+            }
+        } catch (error) {
+            console.error("Failed to log out:", error);
+            notify_error("An error occurred while logging out");
+        }
     };
 
     async function fetching_user_information() {
@@ -50,14 +69,17 @@ const Page = () => {
         <div className="container mx-auto p-4">
             <div className="bg-gray-100 p-6 rounded-lg shadow-lg">
                 <p className="text-xl font-semibold mb-2">
-                    User name: <span className="text-blue-500">{data.username}</span>
+                    User name:{" "}
+                    <span className="text-blue-500">{data.username}</span>
                 </p>
                 <p className="text-lg mb-2">
                     User ID: <span className="text-gray-700">{data.id}</span>
                 </p>
                 <p className="text-lg mb-2">
                     Translation Group:{" "}
-                    <span className="text-gray-700">{data.translator_group}</span>
+                    <span className="text-gray-700">
+                        {data.translator_group}
+                    </span>
                 </p>
                 <p className="text-lg">
                     Total Comics: <span className="text-green-500">12</span>

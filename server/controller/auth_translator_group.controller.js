@@ -119,6 +119,27 @@ async function login_translator(req, res) {
     }
 }
 
+//logout route for translator
+async function logout_translator(req, res) {
+    try {
+        res.clearCookie("token", {
+            httpOnly: isProduction, // Matches the settings used when setting the cookie
+            sameSite: isProduction ? "Strict" : "Lax",
+            secure: isProduction, // Only enabled in production
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Logged out successfully",
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Server Internal Error",
+        });
+    }
+}
+
 async function authenticate_user(req, res, next) {
     try {
         // Get the token from the cookies
@@ -154,4 +175,5 @@ module.exports = {
     register_translator,
     login_translator,
     authenticate_user,
+    logout_translator,
 };
