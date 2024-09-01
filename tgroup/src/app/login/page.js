@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import notify_success, { notify_error } from "@/utility/notify";
+import Link from "next/link";
 
 const Page = () => {
     const router = useRouter();
@@ -47,26 +48,41 @@ const Page = () => {
             <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
                 <h1 className="text-2xl font-bold text-center">Login Page</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="flex flex-col">
-                        <label className="mb-2 text-gray-700">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
+                    <div>
+                        <div className="flex flex-col">
+                            <label className="mb-2 text-gray-700">Email</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="mb-2 text-gray-700">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
                     </div>
-                    <div className="flex flex-col">
-                        <label className="mb-2 text-gray-700">Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
+                    <div className="flex justify-between text-sm text-blue-600">
+                        <span>
+                            <Link href="/register" className="hover:underline">
+                                Register
+                            </Link>
+                        </span>
+                        <span className="hover:underline cursor-pointer">
+                            forgot password
+                        </span>
                     </div>
+
                     <div className="flex justify-center">
                         <button
                             type="submit"

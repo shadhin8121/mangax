@@ -6,6 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 const {
     translator_profile_data,
     translator_create_new_manga,
+    getting_home_page_data_for_translator,
 } = require("../controller/translator_data.controller");
 const {
     authenticate_user,
@@ -21,7 +22,7 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
         const uniqueName = `${uuidv4()}-${file.originalname}`;
         cb(null, uniqueName); // Include unique name
-    }
+    },
 });
 
 const upload = multer({ storage: storage });
@@ -39,6 +40,12 @@ translator_data_router.post(
     authenticate_user,
     upload.single("cover"),
     translator_create_new_manga
+);
+
+translator_data_router.get(
+    "/get_translator_home_page_data",
+    authenticate_user,
+    getting_home_page_data_for_translator
 );
 
 module.exports = translator_data_router;

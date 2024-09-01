@@ -53,13 +53,13 @@ async function translator_create_new_manga(req, res) {
         const translator_id = req.translator_information.id;
 
         // Image path of the file that was uploaded
-        const cover_image_path = req.file ? req.file.path : null;
+        const cover_image_filename = req.file ? req.file.filename : null;
 
         // Creating the manga_data record
         const creating_new_manga = await prisma.manga_data.create({
             data: {
                 title,
-                cover_image: cover_image_path,
+                cover_image: cover_image_filename,
                 alternative_titles: {
                     set: altTitle,
                 },
@@ -117,7 +117,68 @@ async function translator_create_new_manga(req, res) {
     }
 }
 
+async function getting_home_page_data_for_translator(req, res) {
+    try {
+        const translator_id = req.translator_information?.id;
+
+        if (!translator_id) {
+            return res.status(400).json({
+                success: false,
+                message: "Translator ID is missing",
+            });
+        }
+
+        // Fetch manga data related to the specific translator
+        const translatorWithMangaData = await prisma.translator.findUnique({
+            where: { id: translator_id },
+            include: {
+                connection: {
+                    include: {
+                        manga_data: true,
+                    },
+                },
+            },
+        });
+
+        if (!translatorWithMangaData) {
+            return res.status(404).json({
+                success: false,
+                message: "Translator not found",
+            });
+        }
+
+        // Deduplicate and map data
+        const seenIds = new Set();
+        const formattedMangaData = translatorWithMangaData.connection
+            .map((conn) => conn.manga_data)
+            .filter((manga) => {
+                if (!seenIds.has(manga.id)) {
+                    seenIds.add(manga.id);
+                    return true;
+                }
+                return false;
+            })
+            .map((manga) => ({
+                id: manga.id,
+                title: manga.title,
+                cover_image: manga.cover_image,
+            }));
+
+        res.status(200).json({
+            success: true,
+            message: formattedMangaData,
+        });
+    } catch (error) {
+        console.error(error.message); // Use console.error for errors
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+}
+
 module.exports = {
     translator_profile_data,
     translator_create_new_manga,
+    getting_home_page_data_for_translator,
 };

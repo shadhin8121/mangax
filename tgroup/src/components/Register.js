@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
 const Register = () => {
@@ -116,6 +117,12 @@ const Register = () => {
                         className="w-full p-2 border border-gray-300 rounded mt-1"
                     />
                 </div>
+                <div className="mt-4 mb-4 text-center text-blue-600">
+                    <Link href="/login" className="hover:underline">
+                        go to login page
+                    </Link>
+                </div>
+
                 <button
                     type="submit"
                     className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"

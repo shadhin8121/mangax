@@ -5,6 +5,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser"); // Add this line
 const translator_group_router = require("./route/auth_translator_group.route.js");
 const translator_data_router = require("./route/translator_data.route.js");
+const path = require("path");
 
 // Basic code
 const app = express();
@@ -14,6 +15,7 @@ const port = process.env.PORT || 4053;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // Add this line
+app.use("/cover_image", express.static(path.join(__dirname, "../cover_image")));
 
 // Credentials
 const corsOptions = {
