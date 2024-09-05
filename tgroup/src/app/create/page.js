@@ -8,6 +8,9 @@ const Page = () => {
     const [authors, setAuthors] = useState([""]);
     const [publishers, setPublishers] = useState([""]);
 
+    //base url
+    const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+
     const handleAddField = (setState, state) => {
         setState([...state, ""]);
     };
@@ -23,24 +26,40 @@ const Page = () => {
 
         const formData = new FormData(e.target);
 
+        // Get all selected genres, themes, and formats
+        const selectedGenres = formData.getAll("genres[]");
+        const selectedThemes = formData.getAll("theme[]");
+        const selectedFormats = formData.getAll("format[]");
+
+        // Validation to ensure at least one is selected in each
+        if (selectedGenres.length === 0) {
+            notify_error("Please select at least one genre");
+            return;
+        }
+        if (selectedThemes.length === 0) {
+            notify_error("Please select at least one theme");
+            return;
+        }
+        if (selectedFormats.length === 0) {
+            notify_error("Please select at least one format");
+            return;
+        }
+
         try {
-            const response = await fetch(
-                "http://localhost:4043/create_new_manga",
-                {
-                    method: "POST",
-                    body: formData,
-                    credentials: "include",
-                }
-            );
+            const response = await fetch(`${base_url}/create_new_manga`, {
+                method: "POST",
+                body: formData,
+                credentials: "include",
+            });
 
             if (!response.ok) {
+                notify_error("Failed to submit the form");
                 throw new Error("Failed to submit form");
             }
+
             notify_success("Data Submitted Successfully");
-            console.log("Form submitted successfully");
         } catch (error) {
-            notify_error("something went wrong");
-            console.error(error);
+            notify_error(error.message);
         }
     };
 
@@ -64,6 +83,7 @@ const Page = () => {
                             type="file"
                             name="cover"
                             id="cover"
+                            required
                             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                         />
                     </div>
@@ -79,6 +99,7 @@ const Page = () => {
                         <input
                             type="text"
                             name="title"
+                            required
                             id="title"
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         />
@@ -121,6 +142,43 @@ const Page = () => {
                         ))}
                     </div>
 
+                    {/* rating */}
+                    <div>
+                        <label
+                            htmlFor="rating"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Rating
+                        </label>
+                        <input
+                            type="number"
+                            name="rating"
+                            min="1"
+                            max="10"
+                            step="0.1"
+                            required
+                            id="rating"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        />
+                    </div>
+
+                    {/* release */}
+                    <div>
+                        <label
+                            htmlFor="releaseDate"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Release Date
+                        </label>
+                        <input
+                            type="date"
+                            name="releaseDate"
+                            required
+                            id="releaseDate"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        />
+                    </div>
+
                     {/* Description */}
                     <div>
                         <label
@@ -132,6 +190,7 @@ const Page = () => {
                         <input
                             type="text"
                             name="description"
+                            required
                             id="description"
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         />
@@ -181,6 +240,7 @@ const Page = () => {
                                 <input
                                     type="text"
                                     name="artist[]"
+                                    required
                                     value={artist}
                                     onChange={(e) =>
                                         handleChange(
@@ -218,6 +278,7 @@ const Page = () => {
                                 <input
                                     type="text"
                                     name="author[]"
+                                    required
                                     value={author}
                                     onChange={(e) =>
                                         handleChange(
@@ -250,35 +311,39 @@ const Page = () => {
                         <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
                             {[
                                 "Action",
-                                "Comedy",
-                                "Adventure",
-                                "Drama",
-                                "Fantasy",
-                                "Slice of Life",
+                                "adult",
+                                "adventure",
+                                "comedy",
+                                "crime",
+                                "drama",
+                                "ecchi",
+                                "fantasy",
+                                "gender bender",
+                                "gore",
+                                "historical",
+                                "horror",
+                                "isekai",
+                                "magical girls",
+                                "mature",
+                                "mecha",
+                                "medical",
+                                "mystery",
+                                "philosophical",
+                                "psychological",
+                                "romance",
                                 "Sci-Fi",
-                                "Romance",
-                                "Horror",
-                                "Sports",
-                                "Mystery",
-                                "Thriller",
-                                "Supernatural",
-                                "Mecha",
-                                "Psychological",
-                                "Historical",
-                                "Music",
-                                "Ecchi",
-                                "Harem",
-                                "Shoujo",
-                                "Shounen",
-                                "Josei",
-                                "Seinen",
-                                "Yaoi",
-                                "Yuri",
-                                "Magic",
-                                "Monster",
-                                "Isekai",
-                                "Reincarnation",
-                                "Martial Arts",
+                                "sexual violence",
+                                "shojo Ai",
+                                "shounen Ai",
+                                "slice of life",
+                                "smut",
+                                "sports",
+                                "superhero",
+                                "thriller",
+                                "tragedy",
+                                "wuxia",
+                                "yaoi",
+                                "yuri",
                             ].map((genre) => (
                                 <label
                                     key={genre}
@@ -286,12 +351,113 @@ const Page = () => {
                                 >
                                     <input
                                         type="checkbox"
-                                        name="genres"
+                                        name="genres[]"
                                         value={genre}
                                         className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                     />
                                     <span className="ml-2 text-sm text-gray-700 capitalize">
                                         {genre}
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* theme */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Theme
+                        </label>
+                        <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
+                            {[
+                                "aliens",
+                                "animals",
+                                "cooking",
+                                "crossdressing",
+                                "delinquents",
+                                "demons",
+                                "genderswap",
+                                "ghosts",
+                                "gayru",
+                                "harem",
+                                "incest",
+                                "loli",
+                                "mafia",
+                                "magic",
+                                "martial arts",
+                                "military",
+                                "monster girls",
+                                "monsters",
+                                "music",
+                                "ninja",
+                                "office workers",
+                                "police",
+                                "post apocalyptic",
+                                "reincarnation",
+                                "reverse harem",
+                                "samurai",
+                                "school life",
+                                "shota",
+                                "supernatural",
+                                "survival",
+                                "time travel",
+                                "traditional games",
+                                "vampires",
+                                "video games",
+                                "villainess",
+                                "virtual reality",
+                                "zombies",
+                            ].map((theme) => (
+                                <label
+                                    key={theme}
+                                    className="flex items-center"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="theme[]"
+                                        value={theme}
+                                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    />
+                                    <span className="ml-2 text-sm text-gray-700 capitalize">
+                                        {theme}
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* format */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Format
+                        </label>
+                        <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
+                            {[
+                                "4-koma",
+                                "adaptation",
+                                "anthology",
+                                "award wining",
+                                "doujinshi",
+                                "fan colored",
+                                "full color",
+                                "long strip",
+                                "official colored",
+                                "oneshot",
+                                "user created",
+                                "web comic",
+                            ].map((format) => (
+                                <label
+                                    key={format}
+                                    className="flex items-center"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="format[]"
+                                        value={format}
+                                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    />
+                                    <span className="ml-2 text-sm text-gray-700 capitalize">
+                                        {format}
                                     </span>
                                 </label>
                             ))}
@@ -311,6 +477,7 @@ const Page = () => {
                                 <input
                                     type="text"
                                     name="publisher[]"
+                                    required
                                     value={publisher}
                                     onChange={(e) =>
                                         handleChange(

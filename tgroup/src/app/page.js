@@ -64,7 +64,7 @@ export default function Home() {
                         <div
                             key={manga.id}
                             className="flex items-center p-4 bg-gray-100 rounded-lg w-full cursor-pointer"
-                            onClick={() => router.push(`/${manga.id}`)}
+                            onClick={() => router.push(`/comic/${manga.id}`)}
                         >
                             <Image
                                 src={`http://${window.location.hostname}:4043/cover_image/${manga.cover_image}`}

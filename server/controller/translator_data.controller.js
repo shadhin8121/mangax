@@ -41,14 +41,28 @@ async function translator_create_new_manga(req, res) {
             title,
             altTitle = [],
             description,
+            rating,
             type,
+            releaseDate,
             status,
+            theme = [],
+            format = [],
             artist = [],
             author = [],
             genres = [],
             publisher = [],
         } = req.body;
 
+        // Convert the rating string to a floating-point number
+        const floatRating = parseFloat(rating);
+
+        //converting date
+        const release_date = new Date(releaseDate);
+
+        // Handle any cases where the conversion may fail
+        if (isNaN(floatRating)) {
+            return res.status(400).send({ error: "Invalid rating value" });
+        }
         // Translator ID
         const translator_id = req.translator_information.id;
 
@@ -65,6 +79,8 @@ async function translator_create_new_manga(req, res) {
                 },
                 description,
                 type,
+                rating: floatRating,
+                release_date: release_date,
                 status,
                 artists: {
                     set: artist,
@@ -74,6 +90,12 @@ async function translator_create_new_manga(req, res) {
                 },
                 genres: {
                     set: genres,
+                },
+                format: {
+                    set: format,
+                },
+                theme: {
+                    set: theme,
                 },
                 publishers: {
                     set: publisher,
@@ -177,8 +199,32 @@ async function getting_home_page_data_for_translator(req, res) {
     }
 }
 
+async function get_manga_data(req, res) {
+    try {
+        let comic_id = req.params.id;
+
+        let manga_data = await prisma.manga_data.findUnique({
+            where: {
+                id: comic_id,
+            },
+        });
+
+        res.status(200).json({
+            success: true,
+            data: manga_data,
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+}
+
 module.exports = {
     translator_profile_data,
     translator_create_new_manga,
     getting_home_page_data_for_translator,
+    get_manga_data,
 };

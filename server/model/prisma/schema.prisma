@@ -32,12 +32,16 @@ model manga_data {
   cover_image        String
   title              String
   alternative_titles String[]
+  rating             Float                             @default(0.0)
+  release_date       DateTime?
   description        String
   type               String
   status             String
   artists            String[]
   authors            String[]
   genres             String[]
+  theme              String[]
+  format             String[]
   publishers         String[]
   connection         manga_and_translator_connection[]
 }
