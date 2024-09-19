@@ -9,7 +9,7 @@ const Navbar = () => {
 
     return (
         <div className="bg-gray-800 shadow-md">
-            <ul className="container mx-auto flex flex-wrap gap-4 items-center justify-center h-32">
+            <ul className="container mx-auto flex flex-wrap gap-4 items-center justify-center h-16">
                 <li className={path === "/" ? activeClass : "text-gray-300"}>
                     <Link
                         href="/"

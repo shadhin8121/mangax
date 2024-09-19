@@ -7,24 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id         String   @id @default(uuid())
-  username   String
-  email      String   @unique
-  password   String
-  created_at DateTime @default(now())
+// This is for role only
+enum Role {
+  USER // Can read and comment, but cannot upload anything.
+  CONTRIBUTOR // Special user who can upload chapters and manga but needs approval.
+  TRANSLATOR // Can directly upload chapters, but needs approval to create new manga.
+  ADMIN // Can upload, approve, delete, or modify anything. Very sensitive role.
+  OWNER // Only one owner. Can do everything an admin can, plus delete admin accounts.
+  MODERATOR // Can upload and approve posts, no need for approval, but cannot modify roles or sensitive data.
 }
 
-model translator {
+model user {
   id               String                            @id @default(uuid())
-  username         String                            @unique
+  username         String
   email            String                            @unique
   password         String
-  website          String
-  translator_group String
-  discord          String
+  role             Role                              @default(USER)
+  website_name     String? // For translators only
+  translator_group String? // For translators only
+  personal_discord String? // For translators and admins
+  phone_number     String? // Only for admins
   created_at       DateTime                          @default(now())
+  updated_at       DateTime                          @updatedAt
   connection       manga_and_translator_connection[]
+
+  @@index([email])
 }
 
 model manga_data {
@@ -43,15 +50,25 @@ model manga_data {
   theme              String[]
   format             String[]
   publishers         String[]
+  total_chapters     Int                               @default(0)
   connection         manga_and_translator_connection[]
+  created_at         DateTime                          @default(now())
+  updated_at         DateTime                          @updatedAt
+
+  @@index([title])
+  @@index([alternative_titles])
+  @@index([rating])
 }
 
 model manga_and_translator_connection {
-  id            String     @default(uuid())
-  manga_id      String
-  translator_id String
-  translator    translator @relation(fields: [translator_id], references: [id])
-  manga_data    manga_data @relation(fields: [manga_id], references: [id])
+  id         String     @id @default(uuid())
+  manga_id   String
+  user_id    String
+  role       Role       @default(CONTRIBUTOR)
+  user       user       @relation(fields: [user_id], references: [id])
+  manga_data manga_data @relation(fields: [manga_id], references: [id])
+  created_at DateTime   @default(now())
 
-  @@unique([manga_id, translator_id])
+  @@unique([manga_id, user_id])
+  @@index([manga_id, user_id])
 }

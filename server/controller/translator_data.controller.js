@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
+//translator profile data
 async function translator_profile_data(req, res) {
     try {
         const user_id = req.translator_information.id;
@@ -34,6 +35,7 @@ async function translator_profile_data(req, res) {
     }
 }
 
+//creating new manga data for translator
 async function translator_create_new_manga(req, res) {
     try {
         // Extracting data from the request body
@@ -139,6 +141,7 @@ async function translator_create_new_manga(req, res) {
     }
 }
 
+//getting home page data for translator
 async function getting_home_page_data_for_translator(req, res) {
     try {
         const translator_id = req.translator_information?.id;
@@ -199,6 +202,7 @@ async function getting_home_page_data_for_translator(req, res) {
     }
 }
 
+//getting single manga data for translator
 async function get_manga_data(req, res) {
     try {
         let comic_id = req.params.id;
@@ -222,9 +226,20 @@ async function get_manga_data(req, res) {
     }
 }
 
+//updating single comic by translator
+async function update_single_comic(req, res) {
+    let comic_id = req.params.comic_id;
+    let { alternative_title, rating, status, artist } = req.body;
+
+    res.json({ success: true, message: "updated successfully" });
+
+    console.log(alternative_title, rating, status, artist, comic_id);
+}
+
 module.exports = {
     translator_profile_data,
     translator_create_new_manga,
     getting_home_page_data_for_translator,
     get_manga_data,
+    update_single_comic,
 };

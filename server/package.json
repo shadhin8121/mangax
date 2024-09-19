@@ -2,9 +2,7 @@
     "name": "server",
     "version": "1.0.0",
     "main": "index.js",
-    "scripts": {
-        "dev": "nodemon start"
-    },
+    "scripts": {},
     "keywords": [],
     "author": "",
     "license": "ISC",
@@ -24,7 +22,6 @@
         "@types/bcrypt": "^5.0.2",
         "@types/express": "^4.17.21",
         "@types/jsonwebtoken": "^9.0.6",
-        "nodemon": "^3.1.4",
         "prisma": "^5.16.1"
     }
 }

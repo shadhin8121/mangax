@@ -9,6 +9,7 @@ const {
     translator_create_new_manga,
     getting_home_page_data_for_translator,
     get_manga_data,
+    update_single_comic,
 } = require("../controller/translator_data.controller");
 
 //router name
@@ -40,6 +41,12 @@ translator_data_router.get(
     "/get_manga_data/:id",
     authenticate_translator,
     get_manga_data
+);
+
+translator_data_router.put(
+    "/update_comic/:comic_id",
+    authenticate_translator,
+    update_single_comic
 );
 
 module.exports = translator_data_router;
