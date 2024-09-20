@@ -2,7 +2,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-async function authenticate_translator(req, res, next) {
+async function authenticate_user(req, res, next) {
     try {
         // Get the token from the cookies
         const token = req.cookies.token;
@@ -20,9 +20,10 @@ async function authenticate_translator(req, res, next) {
         const decoded = jwt.verify(token, secret_key);
 
         // Attach the user information to the request object for use in other routes
-        req.translator_information = {
+        req.user = {
             id: decoded.id,
             email: decoded.email,
+            role: decoded.role,
         };
 
         // Pass control to the next middleware function
@@ -33,4 +34,4 @@ async function authenticate_translator(req, res, next) {
     }
 }
 
-module.exports = authenticate_translator;
+module.exports = authenticate_user;

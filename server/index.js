@@ -4,10 +4,10 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const user_router = require("./route/auth_user.route.js");
-const translator_group_router = require("./route/auth_translator_group.route.js");
-const translator_data_router = require("./route/translator_data.route.js");
-require("dotenv").config();
+const authenticating_user = require("./route/auth_user_and_role.route"); // No .js extension needed
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const numCPUs = os.cpus().length; // Number of CPU cores
 const port = process.env.PORT || 4053;
@@ -20,6 +20,7 @@ if (cluster.isMaster) {
 
     cluster.on("exit", (worker, code, signal) => {
         console.log(`Worker ${worker.process.pid} died`);
+        cluster.fork();
     });
 } else {
     // Worker processes
@@ -48,12 +49,13 @@ if (cluster.isMaster) {
     app.use(cors(corsOptions));
 
     // Middleware routes
-    app.use(user_router);
-    app.use(translator_group_router);
-    app.use(translator_data_router);
+    // This One only for routers
+    app.use(authenticating_user);
 
     // Start server
     app.listen(port, () => {
-        console.log(`Worker server instance ${process.pid} is running on port ${port}`);
+        console.log(
+            `Worker server instance ${process.pid} is running on port ${port}`
+        );
     });
 }
