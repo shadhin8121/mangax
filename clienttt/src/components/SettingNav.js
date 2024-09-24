@@ -12,26 +12,6 @@ import Link from "next/link";
 
 const SettingNav = () => {
     const [path, setPath] = useState("/login");
-    const [loginOrLogout, setLoginOrLogout] = useState(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setPath("/logout");
-            setLoginOrLogout(
-                <div className="flex items-center gap-2 text-blue-600 dark:text-gray-200">
-                    <CiLogout size={24} /> Logout
-                </div>
-            );
-        } else {
-            setPath("/login");
-            setLoginOrLogout(
-                <div className="flex items-center gap-2 text-blue-600 dark:text-gray-200">
-                    <CiLogin size={24} /> Login
-                </div>
-            );
-        }
-    }, []);
 
     function clearLocalToken() {
         localStorage.removeItem("token");
