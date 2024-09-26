@@ -125,8 +125,8 @@ async function login_user(req, res) {
         res.cookie("token", token, {
             maxAge: 3600000, // 1 hour expiration
             httpOnly: true,
-            secure: process.env.IS_PRODUCTION === "production", // Use secure cookies in production
-            sameSite: process.env.IS_PRODUCTION === "production" ? "strict" : "lax",
+            secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
 
         // Respond with success message on successful login

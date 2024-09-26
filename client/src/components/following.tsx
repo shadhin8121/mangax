@@ -4,7 +4,7 @@ import Following_card from "./following_card";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+// import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const Following: React.FC = () => {
     const images = [
@@ -52,8 +52,13 @@ const Following: React.FC = () => {
         },
     ];
 
-    function SampleNextArrow(props: any) {
-        const { className, style, onClick } = props;
+    interface Arrow_type {
+        className?: string;
+        style?: React.CSSProperties;
+        onClick?: () => void;
+    }
+
+    function SampleNextArrow({ className, style, onClick }: Arrow_type) {
         return (
             <div
                 className={className}
@@ -63,8 +68,7 @@ const Following: React.FC = () => {
         );
     }
 
-    function SamplePrevArrow(props: any) {
-        const { className, style, onClick } = props;
+    function SamplePrevArrow({ className, style, onClick }: Arrow_type) {
         return (
             <div
                 className={className}

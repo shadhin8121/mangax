@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GrUserSettings } from "react-icons/gr";
 import { SiDarkreader } from "react-icons/si";
 import { ImEyeBlocked } from "react-icons/im";
@@ -7,28 +7,16 @@ import { MdDarkMode } from "react-icons/md";
 import { VscGitPullRequestNewChanges } from "react-icons/vsc";
 import { FaDiscord } from "react-icons/fa";
 import { BiSolidDonateHeart } from "react-icons/bi";
-import { CiLogin } from "react-icons/ci";
+import { CiLogin, CiLogout } from "react-icons/ci";
 import Link from "next/link";
 
 const SettingNav: React.FC = () => {
-    const [path, setPath] = useState<string>("/login"); // Change: Typed state
-    
-    const [loginOrLogout, setLoginOrLogout] = useState<React.ReactNode>( // Change: Typed state
-        <div className="flex items-center gap-2 text-blue-600">
-            <CiLogin size={24} /> Login
-        </div>
-    );
+    const [is_login, set_login] = useState<boolean>(false);
 
-    function clearLocalToken() {
-        localStorage.removeItem("token");
-        localStorage.removeItem("id");
-        setPath("/login");
-        setLoginOrLogout(
-            <div className="flex items-center gap-2 text-blue-600">
-                <CiLogin size={24} /> Login
-            </div>
-        );
-    }
+    useEffect(() => {
+        const get_login_info = localStorage.getItem("login");
+        set_login(get_login_info !== null);
+    }, []);
 
     return (
         <div className="min-h-screen bg-blue-100 flex flex-col items-center dark:bg-slate-900">
@@ -83,12 +71,20 @@ const SettingNav: React.FC = () => {
                         </h1>
                     </div>
                 </Link>
-                <div onClick={path === "/logout" ? clearLocalToken : undefined}>
+                <div>
                     {" "}
                     {/* Change: Used 'undefined' instead of 'null' */}
-                    <Link href={path}>
+                    <Link href={is_login ? "/logout" : "/login"}>
                         <div className="w-full border-b-2 border-gray-200 h-12 flex items-center justify-between px-4 transition">
-                            {loginOrLogout}
+                            {is_login ? (
+                                <span className="flex items-center gap-3">
+                                    <CiLogout /> Logout
+                                </span>
+                            ) : (
+                                <span className="flex items-center gap-3">
+                                    <CiLogin /> Login
+                                </span>
+                            )}
                         </div>
                     </Link>
                 </div>

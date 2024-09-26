@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import notify_success, { notify_error } from "@/utility/host_toast";
 
 const Login: React.FC = () => {
     interface login_data_type {
@@ -29,6 +30,7 @@ const Login: React.FC = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     email: formData.email.trim(),
                     password: formData.password.trim(),
@@ -37,16 +39,24 @@ const Login: React.FC = () => {
 
             if (response.ok) {
                 // Handle successful login (e.g., store token, redirect)
+                notify_success("logged in successfully");
+                localStorage.setItem("login", "true");
                 router.push("/");
             } else {
                 // Handle failed login (e.g., show error message)
+                notify_error(response.statusText);
                 console.error("Login failed:", response.statusText);
             }
             setLoading(false);
         } catch (error) {
             // Handle network error or other exceptions
             setLoading(false);
-            console.error("Error logging in:", error);
+            if (error instanceof Error) {
+                notify_error(error.message);
+                console.error("Error logging in:", error);
+            } else {
+                console.log("unknown error");
+            }
         }
     };
 

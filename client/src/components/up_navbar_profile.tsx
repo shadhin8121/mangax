@@ -3,24 +3,25 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 const UpNavbarProfile: React.FC = () => {
-    const [tokenFromLocalStorage, setTokenFromLocalStorage] = useState<
-        string | null
-    >(null);
+    const [is_login, set_login] = useState<string | null>(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        setTokenFromLocalStorage(token);
+        const login = localStorage.getItem("login");
+        set_login(login);
     }, []);
 
     return (
         <div>
-            {tokenFromLocalStorage ? (
-                <Image
-                    src="/images/lol.jpg"
-                    width={45}
-                    height={45}
-                    alt="Profile Picture"
-                />
+            {is_login ? (
+                <div className="rounded-full overflow-hidden bg-white dark:bg-gray-800">
+                    <Image
+                        src="/images/lol.jpg"
+                        width={45}
+                        height={45}
+                        alt="Profile Picture"
+                        className="rounded-full"
+                    />
+                </div>
             ) : (
                 <span className="text-sm sm:text-base ml-2 dark:text-gray-200">
                     Login
