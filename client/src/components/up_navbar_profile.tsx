@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { CgProfile } from "react-icons/cg";
 
 const UpNavbarProfile: React.FC = () => {
     const [is_login, set_login] = useState<string | null>(null);
@@ -23,9 +24,11 @@ const UpNavbarProfile: React.FC = () => {
                     />
                 </div>
             ) : (
-                <span className="text-sm sm:text-base ml-2 dark:text-gray-200">
-                    Login
-                </span>
+                <div className="rounded-ful -mt-5">
+                    <span className="text-sm sm:text-base ml-2 dark:text-gray-200">
+                        <CgProfile size={30} />
+                    </span>
+                </div>
             )}
         </div>
     );

@@ -6,11 +6,11 @@ import { IoSearch } from "react-icons/io5";
 import UpNavbarProfile from "./up_navbar_profile";
 
 const Navbar: React.FC = () => {
-    const [paths, setPaths] = useState("/login");
+    const [paths, setPaths] = useState<string>("/login");
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        setPaths(token ? "/profile" : "/login");
+        const logs = localStorage.getItem("login");
+        setPaths(logs ? "/profile" : "/login");
     }, []);
 
     return (
@@ -23,6 +23,7 @@ const Navbar: React.FC = () => {
                         height={500}
                         alt="logo"
                     />
+
                     <span className="dark:text-gray-200">Mangax</span>
                 </div>
                 <div className="md:flex lg:flex md:items-center lg:items-center hidden ">
@@ -36,7 +37,7 @@ const Navbar: React.FC = () => {
                     </button>
                 </div>
                 <Link href={paths}>
-                    <div className="flex items-center rounded-full overflow-hidden cursor-pointer ml-4 pr-3">
+                    <div className="flex justify-center items-center rounded-full overflow-hidden cursor-pointer ml-4 pr-1">
                         <UpNavbarProfile />
                     </div>
                 </Link>

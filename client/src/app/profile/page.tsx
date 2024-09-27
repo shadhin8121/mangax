@@ -1,8 +1,18 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { CgProfile } from "react-icons/cg";
 
 const ProfilePage: React.FC = () => {
+
+    //leaving this for later use. this use effect and this useState later will be used to determine should i show profile picture or to ask the to upload profile picture.
+    const [is_login, set_login] = useState<boolean>(false);
+
+    useEffect(() => {
+        const login = localStorage.getItem("login");
+        set_login(login ? true : false);
+    }, []);
+
     return (
         <div className="min-h-screen bg-gray-100 pb-20 dark:bg-slate-900 dark:text-gray-200">
             {/* Cover Photo */}
@@ -17,12 +27,12 @@ const ProfilePage: React.FC = () => {
                         <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-green-700 overflow-hidden -mt-16">
                             <Image
                                 src="/images/lol.jpg"
-                                layout="fill"
-                                objectFit="cover"
+                                width={500}
+                                height={500}
                                 alt="Profile"
                             />
                         </div>
-                        <h1 className="text-2xl font-bold text-white mt-2 dark:text-gray-200">
+                        <h1 className="text-2xl font-bold text-white mt-2  dark:text-gray-200">
                             John Doe
                         </h1>
                     </div>

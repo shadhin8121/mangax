@@ -19,6 +19,10 @@ async function authenticate_user(req, res, next) {
         const secret_key = process.env.SECRET_KEY_FOR_JWT;
         const decoded = jwt.verify(token, secret_key);
 
+        // Debugging: log token and decoded user info
+        console.log("Token:", token);
+        console.log("Decoded user:", decoded);
+
         // Attach the user information to the request object for use in other routes
         req.user = {
             id: decoded.id,
@@ -30,6 +34,7 @@ async function authenticate_user(req, res, next) {
         next();
     } catch (err) {
         // If token verification fails, deny access
+        console.error("Authentication error:", err);
         return res.status(401).json({ success: false, message: err.message });
     }
 }

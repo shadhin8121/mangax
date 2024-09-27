@@ -6,6 +6,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authenticating_user = require("./route/auth_user_and_role.route"); // No .js extension needed
 const dotenv = require("dotenv");
+const { user_related_data_router } = require("./route/user_related_data.route");
 
 dotenv.config();
 
@@ -54,6 +55,8 @@ if (cluster.isMaster) {
     // Middleware routes
     // This One only for routers
     app.use(authenticating_user);
+    //user related data. for example: profile upload, update name, etc.
+    app.use(user_related_data_router);
 
     // Start server
     app.listen(port, () => {
