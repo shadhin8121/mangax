@@ -6,6 +6,7 @@ async function authenticate_user(req, res, next) {
     try {
         // Get the token from the cookies
         const token = req.cookies.token;
+        // console.log(token);
 
         // If no token is found, deny access
         if (!token) {
@@ -20,8 +21,8 @@ async function authenticate_user(req, res, next) {
         const decoded = jwt.verify(token, secret_key);
 
         // Debugging: log token and decoded user info
-        console.log("Token:", token);
-        console.log("Decoded user:", decoded);
+        // console.log("Token:", token);
+        // console.log("Decoded user:", decoded);
 
         // Attach the user information to the request object for use in other routes
         req.user = {
@@ -33,9 +34,19 @@ async function authenticate_user(req, res, next) {
         // Pass control to the next middleware function
         next();
     } catch (err) {
-        // If token verification fails, deny access
         console.error("Authentication error:", err);
-        return res.status(401).json({ success: false, message: err.message });
+
+        // Handle specific errors like token expiration
+        if (err.name === "TokenExpiredError") {
+            return res
+                .status(401)
+                .json({ success: false, message: "Token expired." });
+        }
+
+        // For any other token verification errors
+        return res
+            .status(401)
+            .json({ success: false, message: "Invalid token." });
     }
 }
 

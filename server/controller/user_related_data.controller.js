@@ -49,6 +49,7 @@ async function upload_profile(req, res) {
 async function profile_data(req, res) {
     try {
         let id = req.user.id; // Get the user ID from the request
+        // console.log(id);
         let find_user_data = await prisma.user.findUnique({
             where: {
                 id: id, // Search for the user by ID

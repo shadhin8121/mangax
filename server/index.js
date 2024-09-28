@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const authenticating_user = require("./route/auth_user_and_role.route"); // No .js extension needed
 const dotenv = require("dotenv");
 const { user_related_data_router } = require("./route/user_related_data.route");
+const authenticate_user = require("./util/authenticate_user");
 
 dotenv.config();
 
@@ -41,8 +42,6 @@ if (cluster.isMaster) {
             "http://localhost:4043",
         ],
         credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
     };
     app.use(cors(corsOptions));
 
@@ -54,7 +53,7 @@ if (cluster.isMaster) {
 
     // Middleware routes
     // This One only for routers
-    app.use(authenticating_user);
+    app.use(authenticating_user); // this is used in login and logout and register routes
     //user related data. for example: profile upload, update name, etc.
     app.use(user_related_data_router);
 
