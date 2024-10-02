@@ -2,26 +2,29 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { CgProfile } from "react-icons/cg";
+import { useAtom } from "jotai";
+import { check_login_status, global_profile_data } from "@/globalStore/jotai";
+import { FaRegFaceFlushed } from "react-icons/fa6";
 
 const UpNavbarProfile: React.FC = () => {
-    const [is_login, set_login] = useState<string | null>(null);
-
-    useEffect(() => {
-        const login = localStorage.getItem("login");
-        set_login(login);
-    }, []);
+    const [is_login] = useAtom(check_login_status);
+    const [data] = useAtom(global_profile_data);
 
     return (
         <div>
             {is_login ? (
                 <div className="rounded-full overflow-hidden bg-white dark:bg-gray-800">
-                    <Image
-                        src="/images/lol.jpg"
-                        width={45}
-                        height={45}
-                        alt="Profile Picture"
-                        className="rounded-full"
-                    />
+                    {data?.cover_image ? (
+                        <Image
+                            src={data?.cover_image}
+                            width={45}
+                            height={45}
+                            alt="Profile Picture"
+                            className="rounded-full"
+                        />
+                    ) : (
+                        <FaRegFaceFlushed size={35} />
+                    )}
                 </div>
             ) : (
                 <div className="rounded-ful -mt-5">

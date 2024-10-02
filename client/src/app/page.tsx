@@ -1,32 +1,41 @@
 "use client";
+import { getProfileData } from "@/api/api";
 import DownNavbar from "@/components/down_navbar";
 import Following from "@/components/following";
 import Navbar from "@/components/up_navbar";
+import { check_login_status, global_profile_data } from "@/globalStore/jotai";
+import { useQuery } from "@tanstack/react-query";
+import { useAtom } from "jotai";
 import { useEffect } from "react";
 
 export default function Home(): JSX.Element {
+    // Initialize jotai state outside the conditional
+    const [jotai_data, set_data] = useAtom(global_profile_data);
+    const [is_login, set_login] = useAtom(check_login_status);
+
+    // Query for profile data
+    const { data: profileData, isError } = useQuery({
+        queryKey: ["profile_data"],
+        queryFn: getProfileData,
+        retry: false,
+    });
+
+    // Determine if the user is logged in
+    const isLoggedIn = !!profileData && !isError;
+
+    // Update the jotai atom when profileData is available
     useEffect(() => {
-        profile_data();
-    }, []);
-    async function profile_data() {
-        try {
-            let url = process.env.NEXT_PUBLIC_SERVER_URL;
-            console.log(url);
-            let response = await fetch(`${url}/profile_data`, {
-                method: "POST",
-                credentials: "include",
-            });
-            let data = await response.json();
-            console.log(data);
-        } catch (err) {
-            console.log(err);
+        if (profileData) {
+            set_data(profileData);
+            set_login(isLoggedIn); // Update login status in Jotai store
         }
-    }
+    }, [profileData, set_data, isLoggedIn, set_login]); // Add dependencies
+
     return (
-        <div className="dark:bg-slate-900 ">
+        <div className="dark:bg-slate-900">
             <Navbar />
             <div className="container mx-auto">
-                <h1 className="text-2xl md:text-3xl px-2 pt-3 pb-1 ">
+                <h1 className="text-2xl md:text-3xl px-2 pt-3 pb-1">
                     Following
                 </h1>
 

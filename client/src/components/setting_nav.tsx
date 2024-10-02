@@ -9,14 +9,11 @@ import { FaDiscord } from "react-icons/fa";
 import { BiSolidDonateHeart } from "react-icons/bi";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import Link from "next/link";
+import { useAtom } from "jotai";
+import { check_login_status } from "@/globalStore/jotai";
 
 const SettingNav: React.FC = () => {
-    const [is_login, set_login] = useState<boolean>(false);
-
-    useEffect(() => {
-        const get_login_info = localStorage.getItem("login");
-        set_login(get_login_info !== null);
-    }, []);
+    const [is_login] = useAtom(check_login_status);
 
     return (
         <div className="min-h-screen bg-blue-100 flex flex-col items-center dark:bg-slate-900">

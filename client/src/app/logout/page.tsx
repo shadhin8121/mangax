@@ -1,10 +1,13 @@
 "use client";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAtom } from "jotai"; // Import useAtom
+import { check_login_status } from "@/globalStore/jotai"; // Import your atom
 import notify_success, { notify_error } from "@/utility/host_toast";
 
 const Page: React.FC = () => {
     const router = useRouter();
+    const [, set_login] = useAtom(check_login_status); // Use the atom
 
     useEffect(() => {
         logging_out();
@@ -22,8 +25,8 @@ const Page: React.FC = () => {
                 credentials: "include",
             });
             if (response.ok) {
-                localStorage.removeItem("login");
-                notify_success("logged out successfully");
+                set_login(false); // Set login status to false
+                notify_success("Logged out successfully");
             } else {
                 notify_error(`Failed to log out: ${response.statusText}`);
             }

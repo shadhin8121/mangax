@@ -4,6 +4,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/theme_provider";
 import { Provider } from "jotai";
 import { Toaster } from "react-hot-toast";
+import React_query_wrapper from "@/components/react_query_wrapper";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -31,11 +32,13 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-slate-800`}
             >
-                <Provider>
-                    {" "}
-                    <ThemeProvider>{children}</ThemeProvider>
-                    <Toaster position="top-center" reverseOrder={false} />
-                </Provider>
+                <React_query_wrapper>
+                    <Provider>
+                        {" "}
+                        <ThemeProvider>{children}</ThemeProvider>
+                        <Toaster position="top-center" reverseOrder={false} />
+                    </Provider>
+                </React_query_wrapper>
             </body>
         </html>
     );

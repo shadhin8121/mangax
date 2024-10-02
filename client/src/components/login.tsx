@@ -40,7 +40,6 @@ const Login: React.FC = () => {
             if (response.ok) {
                 // Handle successful login (e.g., store token, redirect)
                 notify_success("logged in successfully");
-                localStorage.setItem("login", "true");
                 router.push("/");
             } else {
                 // Handle failed login (e.g., show error message)

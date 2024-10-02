@@ -4,14 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoSearch } from "react-icons/io5";
 import UpNavbarProfile from "./up_navbar_profile";
+import { useAtom } from "jotai";
+import { check_login_status, global_profile_data } from "@/globalStore/jotai";
+
 
 const Navbar: React.FC = () => {
     const [paths, setPaths] = useState<string>("/login");
+    const [is_login] = useAtom(check_login_status);
 
+
+    // Update paths when is_login changes
     useEffect(() => {
-        const logs = localStorage.getItem("login");
-        setPaths(logs ? "/profile" : "/login");
-    }, []);
+        setPaths(is_login ? "/profile" : "/login");
+    }, [is_login]); // Depend on is_login
 
     return (
         <div className="border-b-4 border-gray-300 dark:border-gray-700 shadow-md dark:bg-slate-800">
@@ -23,7 +28,6 @@ const Navbar: React.FC = () => {
                         height={500}
                         alt="logo"
                     />
-
                     <span className="dark:text-gray-200">Mangax</span>
                 </div>
                 <div className="md:flex lg:flex md:items-center lg:items-center hidden ">

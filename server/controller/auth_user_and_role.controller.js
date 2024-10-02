@@ -115,22 +115,29 @@ async function login_user(req, res) {
             id: find_user.id,
             role: find_user.role,
         };
+
+        //max age of the token and cookie
+        let expire_date_of_token = "1h";
+        let expire_date_of_cookie = 3600000; //these two should be the same no matter what
+
         let secret_key = process.env.SECRET_KEY_FOR_JWT;
-        let options = { expiresIn: "1h" }; // Token expires in 1 hour
+        let options = { expiresIn: expire_date_of_token }; // Token expires in 1 hour
 
         // Sign JWT token with payload, secret, and options
         let token = jwt.sign(payload, secret_key, options);
 
         // Set the token in a cookie with secure and sameSite flags depending on environment
         res.cookie("token", token, {
-            maxAge: 3600000, // 1 hour expiration
+            maxAge: expire_date_of_cookie, // 1 hour expiration in millisecond
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", // Use secure cookies in production
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
 
         // Respond with success message on successful login
-        res.status(200).json({ message: "Logged in successfully" });
+        res.status(200).json({
+            message: "Logged in successfully",
+        });
     } catch (err) {
         console.log(err.message);
         res.status(500).json({ error: "Internal server error" });
@@ -151,5 +158,16 @@ function logout_user(req, res) {
     }
 }
 
+function login_state(req, res) {
+    try {
+        res.status(200).json({
+            login: true,
+        });
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ error: "internal server error" });
+    }
+}
+
 // Export the functions for use in other files
-module.exports = { register_user, login_user, logout_user };
+module.exports = { register_user, login_user, logout_user, login_state };
