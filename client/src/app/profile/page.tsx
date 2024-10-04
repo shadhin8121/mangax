@@ -72,10 +72,11 @@ const ProfilePage: React.FC = () => {
                         <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-green-700 overflow-hidden -mt-16">
                             {data?.cover_image ? (
                                 <Image
-                                    src={data?.cover_image}
-                                    width={500}
-                                    height={500}
+                                    src={`http://localhost:4043/cover_image/${data?.cover_image}`}
+                                    width={500} // Use a larger width if necessary
+                                    height={500} // Use a larger height if necessary
                                     alt="Profile"
+                                    className="w-full h-full object-cover" // Add this line
                                 />
                             ) : (
                                 <Link href="/profile/upload_cover">
@@ -84,6 +85,7 @@ const ProfilePage: React.FC = () => {
                                         width={500}
                                         height={500}
                                         alt="Profile"
+                                        className="w-full h-full object-cover" // Add this line
                                     />
                                 </Link>
                             )}

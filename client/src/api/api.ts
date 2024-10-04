@@ -17,3 +17,4 @@ export async function getProfileData() {
     return data.data;
 }
 
+//uploading cover image
