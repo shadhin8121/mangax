@@ -17,4 +17,17 @@ export async function getProfileData() {
     return data.data;
 }
 
-//uploading cover image
+//logout user
+export async function logoutUser() {
+    const response = await fetch("http://localhost:4043/logout", {
+        method: "POST",
+        credentials: "include",
+    });
+
+    if(!response.ok){
+        throw new Error("network response was not ok");
+    }
+
+    const data = await response.json();
+    return data;
+}

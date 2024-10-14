@@ -1,11 +1,13 @@
 "use client";
-import { notify_error } from "@/utility/host_toast";
+import notify_success, { notify_error } from "@/utility/host_toast";
 import React, { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { useRouter } from "next/navigation"; // Import useRouter
 
 const Page: React.FC = () => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null); // For preview
+    const router = useRouter(); // Initialize router
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -45,7 +47,11 @@ const Page: React.FC = () => {
             }
 
             const result = await response.json();
+            notify_success("Cover picture updated!");
             console.log("Image uploaded successfully:", result);
+
+            // Redirect to home page after success
+            router.push("/"); // Redirect to home page
         } catch (error) {
             console.error("Error uploading image:", error);
         }

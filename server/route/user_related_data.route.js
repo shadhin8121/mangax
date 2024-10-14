@@ -3,7 +3,7 @@ const {
     upload_profile,
     profile_data,
 } = require("../controller/user_related_data.controller");
-const upload_cover = require("../util/upload_cover");
+const { upload_cover, convertImageToWebP } = require("../util/upload_cover");
 const authenticate_user = require("../util/authenticate_user");
 const user_related_data_router = express.Router();
 
@@ -12,6 +12,7 @@ user_related_data_router.post(
     "/upload_profile",
     authenticate_user,
     upload_cover.single("cover_image"),
+    convertImageToWebP,
     upload_profile
 );
 

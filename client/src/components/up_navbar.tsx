@@ -4,19 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoSearch } from "react-icons/io5";
 import UpNavbarProfile from "./up_navbar_profile";
-import { useAtom } from "jotai";
-import { check_login_status, global_profile_data } from "@/globalStore/jotai";
-
+import { useQuery } from "@tanstack/react-query";
+import { getProfileData } from "@/api/api";
 
 const Navbar: React.FC = () => {
     const [paths, setPaths] = useState<string>("/login");
-    const [is_login] = useAtom(check_login_status);
 
+    const { data, isError } = useQuery({
+        queryKey: ["profile_data"],
+        queryFn: getProfileData,
+        retry: false,
+    });
 
-    // Update paths when is_login changes
     useEffect(() => {
-        setPaths(is_login ? "/profile" : "/login");
-    }, [is_login]); // Depend on is_login
+        // Set the path based on the fetched data
+        if (!isError) {
+            setPaths(data ? "/profile" : "/login");
+        }
+    }, [data, isError]); // Depend only on data and isError
 
     return (
         <div className="border-b-4 border-gray-300 dark:border-gray-700 shadow-md dark:bg-slate-800">

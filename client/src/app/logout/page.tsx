@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAtom } from "jotai"; // Import useAtom
-import { check_login_status } from "@/globalStore/jotai"; // Import your atom
 import notify_success, { notify_error } from "@/utility/host_toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { logoutUser } from "@/api/api";
 
 const Page: React.FC = () => {
     const router = useRouter();
-    const [, set_login] = useAtom(check_login_status); // Use the atom
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         logging_out();
@@ -20,24 +20,32 @@ const Page: React.FC = () => {
 
     async function logging_out() {
         try {
-            const response = await fetch("http://localhost:4043/logout", {
-                method: "POST",
-                credentials: "include",
-            });
-            if (response.ok) {
-                set_login(false); // Set login status to false
-                notify_success("Logged out successfully");
-            } else {
-                notify_error(`Failed to log out: ${response.statusText}`);
+            const data = await logoutUser(); // Directly call the logout function
+
+            if (data) {
+                notify_success("Logout successful");
+
+                // Invalidate the cache and refetch profile data
+                await queryClient.invalidateQueries({
+                    queryKey: ["profile_data"],
+                    exact: true,
+                });
+                await queryClient.refetchQueries({
+                    queryKey: ["profile_data"],
+                });
+
+                // Optionally force re-render if needed
+                queryClient.resetQueries({
+                    queryKey: ["profile_data"],
+                });
             }
         } catch (error) {
             if (error instanceof Error) {
-                console.log(error.name);
-                console.log(error.message);
+                console.error(error.name, error.message);
                 notify_error(error.message);
             } else {
-                notify_error("unknown error");
-                console.log("unknown error");
+                console.error("unknown error");
+                notify_error("Unknown error occurred while logging out.");
             }
         }
     }

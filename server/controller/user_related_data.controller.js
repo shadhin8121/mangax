@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const path = require("path");
 
 async function upload_profile(req, res) {
     try {
@@ -13,9 +14,10 @@ async function upload_profile(req, res) {
         const user_role = req.user.role;
         const user_email = req.user.email;
 
-        console.log(
-            `cover image: ${cover_image.filename}, user id: ${user_id}, user role: ${user_role}, user email: ${user_email}`
-        );
+        //converted image path
+        const webpFileName = cover_image.webpPath
+            ? path.basename(cover_image.webpPath)
+            : cover_image.filename;
 
         // Update the user's cover image
         let update_user_cover_image = await prisma.user.update({
@@ -23,11 +25,11 @@ async function upload_profile(req, res) {
                 id: user_id,
             },
             data: {
-                cover_image: cover_image.filename, // Make sure to use the filename or URL
+                cover_image: webpFileName, // Make sure to use the filename or URL
             },
         });
 
-        // Check if the update was successful
+        // Check if the update was unsuccessful
         if (!update_user_cover_image) {
             return res.status(500).json({
                 error: "Something went wrong while updating the cover image.",

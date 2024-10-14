@@ -9,11 +9,15 @@ import { FaDiscord } from "react-icons/fa";
 import { BiSolidDonateHeart } from "react-icons/bi";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import Link from "next/link";
-import { useAtom } from "jotai";
-import { check_login_status } from "@/globalStore/jotai";
+import { useQuery } from "@tanstack/react-query";
+import { getProfileData } from "@/api/api";
 
 const SettingNav: React.FC = () => {
-    const [is_login] = useAtom(check_login_status);
+    const { data, isError } = useQuery({
+        queryKey: ["profile_data"],
+        queryFn: getProfileData,
+        retry: false,
+    });
 
     return (
         <div className="min-h-screen bg-blue-100 flex flex-col items-center dark:bg-slate-900">
@@ -71,9 +75,9 @@ const SettingNav: React.FC = () => {
                 <div>
                     {" "}
                     {/* Change: Used 'undefined' instead of 'null' */}
-                    <Link href={is_login ? "/logout" : "/login"}>
+                    <Link href={data ? "/logout" : "/login"}>
                         <div className="w-full border-b-2 border-gray-200 h-12 flex items-center justify-between px-4 transition">
-                            {is_login ? (
+                            {data ? (
                                 <span className="flex items-center gap-3">
                                     <CiLogout /> Logout
                                 </span>

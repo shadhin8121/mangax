@@ -3,15 +3,15 @@ import { getProfileData } from "@/api/api";
 import DownNavbar from "@/components/down_navbar";
 import Following from "@/components/following";
 import Navbar from "@/components/up_navbar";
-import { check_login_status, global_profile_data } from "@/globalStore/jotai";
+// import { check_login_status, global_profile_data } from "@/globalStore/jotai";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
 export default function Home(): JSX.Element {
     // Initialize jotai state outside the conditional
-    const [jotai_data, set_data] = useAtom(global_profile_data);
-    const [is_login, set_login] = useAtom(check_login_status);
+    // const [jotai_data, set_data] = useAtom(global_profile_data);
+    // const [is_login, set_login] = useAtom(check_login_status);
 
     // Query for profile data
     const { data: profileData, isError } = useQuery({
@@ -23,13 +23,13 @@ export default function Home(): JSX.Element {
     // Determine if the user is logged in
     const isLoggedIn = !!profileData && !isError;
 
-    // Update the jotai atom when profileData is available
-    useEffect(() => {
-        if (profileData) {
-            set_data(profileData);
-            set_login(isLoggedIn); // Update login status in Jotai store
-        }
-    }, [profileData, set_data, isLoggedIn, set_login]); // Add dependencies
+    // // Update the jotai atom when profileData is available
+    // useEffect(() => {
+    //     if (profileData) {
+    //         set_data(profileData);
+    //         set_login(isLoggedIn); // Update login status in Jotai store
+    //     }
+    // }, [profileData, set_data, isLoggedIn, set_login]); // Add dependencies
 
     return (
         <div className="dark:bg-slate-900">
