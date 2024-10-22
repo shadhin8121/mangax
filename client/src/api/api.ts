@@ -24,7 +24,7 @@ export async function logoutUser() {
         credentials: "include",
     });
 
-    if(!response.ok){
+    if (!response.ok) {
         throw new Error("network response was not ok");
     }
 

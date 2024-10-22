@@ -10,7 +10,8 @@ const storage = multer.diskStorage({
         cb(null, path.join(__dirname, "../../cover_image"));
     },
     filename: (req, file, cb) => {
-        const uniqueName = `${uuidv4()}-${file.originalname}`;
+        // Generate WebP filename directly to avoid the need for deletion
+        const uniqueName = `${uuidv4()}.webp`;
         cb(null, uniqueName);
     },
 });
@@ -18,42 +19,45 @@ const storage = multer.diskStorage({
 // Create multer upload middleware
 const upload_cover = multer({ storage: storage });
 
-// Middleware to convert and replace image with WebP format
+// Middleware to convert image to WebP format
 const convertImageToWebP = async (req, res, next) => {
     if (!req.file) {
         return res.status(400).send("No file uploaded.");
     }
 
-    const inputPath = req.file.path; // Path to the uploaded image
-    const outputPath = inputPath.replace(
-        path.extname(req.file.originalname),
-        ".webp"
-    );
-
     try {
-        // Convert the image to WebP format
-        await sharp(inputPath)
+        // Convert the image to WebP format in-place
+        await sharp(req.file.path)
             .toFormat("webp", {
                 quality: 60,
                 nearLossless: true,
             })
-            .toFile(outputPath);
+            .toFile(`${req.file.path}.tmp`);
 
-        //delete the original image
-        // fs.unlinkSync(inputPath);
+        // Replace the original file with the WebP version
+        try {
+            fs.unlinkSync(req.file.path);
+            fs.renameSync(`${req.file.path}.tmp`, req.file.path);
+        } catch (deleteError) {
+            console.warn(
+                "Warning: Could not clean up original file:",
+                deleteError
+            );
+            // Continue anyway since we have the converted file
+        }
 
-        //store the output path in req for further processing
-        req.file.webpPath = outputPath;
+        // Update the file information
+        req.file.mimetype = "image/webp";
+        req.file.webpPath = req.file.path;
 
         console.log("Image converted to WebP format successfully!");
-        next(); // Calling the next middleware or route handler
+        next();
     } catch (error) {
         console.error("Error converting image:", error);
         return res.status(500).send("Error processing file.");
     }
 };
 
-// Exporting the multer upload function and the conversion middleware
 module.exports = {
     upload_cover,
     convertImageToWebP,

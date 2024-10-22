@@ -17,14 +17,14 @@ const UpNavbarProfile: React.FC = () => {
         <div>
             {/* Display user's profile if logged in */}
             {data ? (
-                <div className="rounded-full overflow-hidden bg-white dark:bg-gray-800">
+                <div className="overflow-hidden bg-white dark:bg-gray-800 w-[35px] h-[35px]">
                     {data.cover_image ? (
                         <Image
                             src={`http://localhost:4043/cover_image/${data.cover_image}`}
                             width={45}
                             height={45}
                             alt="Profile Picture"
-                            className="rounded-full"
+                            className="rounded-full object-cover w-full h-full"
                         />
                     ) : (
                         <FaRegFaceFlushed size={35} />
