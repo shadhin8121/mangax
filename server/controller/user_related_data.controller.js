@@ -1,49 +1,58 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const path = require("path");
+const fs = require("fs/promises"); // Use the promises API of fs
 
 async function upload_profile(req, res) {
     try {
-        // Check if the cover image file is present
         const cover_image = req.file;
         if (!cover_image) {
-            return res.status(400).json({ error: "No cover image uploaded." }); // Handle missing file
+            return res.status(400).json({ error: "No cover image uploaded." });
         }
 
         const user_id = req.user.id;
-        const user_role = req.user.role;
-        const user_email = req.user.email;
+        const user = await prisma.user.findUnique({
+            where: { id: user_id },
+            select: { cover_image: true },
+        });
 
-        //converted image path
         const webpFileName = cover_image.webpPath
             ? path.basename(cover_image.webpPath)
             : cover_image.filename;
 
-        // Update the user's cover image
         let update_user_cover_image = await prisma.user.update({
-            where: {
-                id: user_id,
-            },
-            data: {
-                cover_image: webpFileName, // Make sure to use the filename or URL
-            },
+            where: { id: user_id },
+            data: { cover_image: webpFileName },
         });
 
-        // Check if the update was unsuccessful
         if (!update_user_cover_image) {
             return res.status(500).json({
                 error: "Something went wrong while updating the cover image.",
             });
         }
 
-        // Respond with success message
+        // Delete the old cover image if it exists and is different from the new one
+        if (user.cover_image && user.cover_image !== webpFileName) {
+            const oldImagePath = path.join(
+                __dirname,
+                "../../cover_image",
+                user.cover_image
+            );
+
+            try {
+                await fs.promises.unlink(oldImagePath);
+                console.log("Old cover image deleted successfully!");
+            } catch (err) {
+                console.warn("Failed to delete the old cover image:", err);
+            }
+        }
+
         res.status(200).json({
             message: "You have uploaded the cover image successfully.",
         });
     } catch (error) {
-        // Handle errors appropriately
-        console.error(error); // Log the full error for debugging
-        res.status(500).json({ error: "Internal Server Error" }); // Generic error response
+        console.error("Error in upload_profile:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 }
 
@@ -61,6 +70,7 @@ async function profile_data(req, res) {
                 cover_image: true, // Select the cover image
                 email: true, // Select the email
                 created_at: true, // Select the created at timestamp
+                role: true,
             },
         });
 

@@ -36,15 +36,18 @@ const convertImageToWebP = async (req, res, next) => {
 
         // Replace the original file with the WebP version
         try {
+            console.log("Attempting to delete original file:", req.file.path);
             fs.unlinkSync(req.file.path);
+            console.log("Original file deleted successfully.");
+        
+            console.log("Renaming temporary file to original path...");
             fs.renameSync(`${req.file.path}.tmp`, req.file.path);
+            console.log("Temporary file renamed successfully.");
         } catch (deleteError) {
-            console.warn(
-                "Warning: Could not clean up original file:",
-                deleteError
-            );
-            // Continue anyway since we have the converted file
+            console.warn("Warning: Could not clean up original file:", deleteError);
+            // Consider sending an error response if critical
         }
+        
 
         // Update the file information
         req.file.mimetype = "image/webp";

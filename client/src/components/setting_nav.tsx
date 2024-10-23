@@ -19,6 +19,8 @@ const SettingNav: React.FC = () => {
         retry: false,
     });
 
+    console.log(data);
+
     return (
         <div className="min-h-screen bg-blue-100 flex flex-col items-center dark:bg-slate-900">
             <div className="w-full lg:w-1/3 bg-white rounded-lg shadow-lg p-4 dark:bg-slate-800">
