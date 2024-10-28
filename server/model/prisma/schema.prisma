@@ -73,3 +73,8 @@ model manga_and_translator_connection {
   @@unique([manga_id, user_id])
   @@index([manga_id, user_id])
 }
+
+model dump_cover {
+  id                    String @id @default(uuid())
+  dump_cover_image_data String
+}

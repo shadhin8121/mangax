@@ -4,54 +4,25 @@ const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
 const fs = require("fs");
 
-// Setup storage for multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, "../../cover_image"));
-    },
-    filename: (req, file, cb) => {
-        // Generate WebP filename directly to avoid the need for deletion
-        const uniqueName = `${uuidv4()}.webp`;
-        cb(null, uniqueName);
-    },
-});
+// 1. Use memory storage to temporarily hold the image in RAM
+const storage = multer.memoryStorage();
+const upload_cover = multer({ storage });
 
-// Create multer upload middleware
-const upload_cover = multer({ storage: storage });
-
-// Middleware to convert image to WebP format
+// 2. Middleware to convert image to WebP format
 const convertImageToWebP = async (req, res, next) => {
     if (!req.file) {
         return res.status(400).send("No file uploaded.");
     }
 
     try {
-        // Convert the image to WebP format in-place
-        await sharp(req.file.path)
-            .toFormat("webp", {
-                quality: 60,
-                nearLossless: true,
-            })
-            .toFile(`${req.file.path}.tmp`);
+        // Convert the uploaded image buffer to WebP
+        const webpBuffer = await sharp(req.file.buffer)
+            .toFormat("webp", { quality: 60, nearLossless: true })
+            .toBuffer();
 
-        // Replace the original file with the WebP version
-        try {
-            console.log("Attempting to delete original file:", req.file.path);
-            fs.unlinkSync(req.file.path);
-            console.log("Original file deleted successfully.");
-        
-            console.log("Renaming temporary file to original path...");
-            fs.renameSync(`${req.file.path}.tmp`, req.file.path);
-            console.log("Temporary file renamed successfully.");
-        } catch (deleteError) {
-            console.warn("Warning: Could not clean up original file:", deleteError);
-            // Consider sending an error response if critical
-        }
-        
-
-        // Update the file information
-        req.file.mimetype = "image/webp";
-        req.file.webpPath = req.file.path;
+        // Store the converted WebP buffer in req for the next middleware
+        req.file.buffer = webpBuffer;
+        req.file.mimetype = "image/webp"; // update MIME type for WebP
 
         console.log("Image converted to WebP format successfully!");
         next();
@@ -61,7 +32,37 @@ const convertImageToWebP = async (req, res, next) => {
     }
 };
 
+// 3. Middleware to save the WebP file to disk
+const saveConvertedImage = (req, res, next) => {
+    if (!req.file || !req.file.buffer) {
+        return res.status(400).send("File not processed.");
+    }
+
+    const savePath = path.join(__dirname, "../../cover_image");
+    const uniqueName = `${uuidv4()}.webp`;
+    const fullPath = path.join(savePath, uniqueName);
+
+    try {
+        // Ensure the directory exists
+        fs.mkdirSync(savePath, { recursive: true });
+
+        // Write the WebP buffer to the specified location
+        fs.writeFileSync(fullPath, req.file.buffer);
+
+        // Attach the saved path for future use
+        req.file.path = fullPath;
+        req.file.converted_webp = uniqueName;
+
+        console.log("Converted WebP image saved successfully!");
+        next();
+    } catch (error) {
+        console.error("Error saving file:", error);
+        return res.status(500).send("Error saving file.");
+    }
+};
+
 module.exports = {
     upload_cover,
     convertImageToWebP,
+    saveConvertedImage,
 };
