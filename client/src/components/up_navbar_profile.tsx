@@ -20,7 +20,7 @@ const UpNavbarProfile: React.FC = () => {
                 <div className="overflow-hidden bg-white dark:bg-gray-800 w-[35px] h-[35px]">
                     {data.cover_image ? (
                         <Image
-                            src={`http://localhost:4043/cover_image/${data.cover_image}`}
+                            src={`${data.cover_image}`}
                             width={45}
                             height={45}
                             alt="Profile Picture"

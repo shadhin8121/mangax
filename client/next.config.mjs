@@ -1,12 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
+        // Allowing images from any domain
         remotePatterns: [
             {
-                protocol: 'http',       // Specify the protocol
-                hostname: 'localhost',  // Only the hostname without port
-                port: '4043',           // Include the port if needed
-                pathname: '/cover_image/**', // Define the path pattern
+                protocol: "https",
+                hostname: "**", // This allows all hostnames
+                port: "", // No specific port
+                pathname: "/**", // This allows all paths
+            },
+            {
+                protocol: "http",
+                hostname: "**", // This allows all hostnames
+                port: "", // No specific port
+                pathname: "/**", // This allows all paths
             },
         ],
     },
