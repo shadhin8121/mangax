@@ -5,6 +5,7 @@ import { CgProfile } from "react-icons/cg";
 import { FaRegFaceFlushed } from "react-icons/fa6";
 import { useQuery } from "@tanstack/react-query";
 import { getProfileData } from "@/api/api";
+import CryptoJS from "crypto-js";
 
 const UpNavbarProfile: React.FC = () => {
     const { data, isError } = useQuery({
@@ -13,14 +14,19 @@ const UpNavbarProfile: React.FC = () => {
         retry: false,
     });
 
+    const emailHash = data?.email
+        ? CryptoJS.MD5(data.email.trim().toLowerCase()).toString()
+        : "";
+    const gravatarUrl = `https://www.gravatar.com/avatar/${emailHash}?s=200&d=identicon`;
+
     return (
         <div>
             {/* Display user's profile if logged in */}
             {data ? (
                 <div className="overflow-hidden bg-white dark:bg-gray-800 w-[35px] h-[35px]">
-                    {data.cover_image ? (
+                    {data.email ? (
                         <Image
-                            src={`${data.cover_image}`}
+                            src={gravatarUrl}
                             width={45}
                             height={45}
                             alt="Profile Picture"

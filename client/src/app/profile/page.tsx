@@ -1,76 +1,42 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getProfileData } from "@/api/api";
 import Link from "next/link";
 import { GrDocumentUpdate } from "react-icons/gr";
-import { IoIosWarning } from "react-icons/io";
-import notify_success, { notify_error } from "@/utility/host_toast";
+import CryptoJS from "crypto-js";
 
 const ProfilePage: React.FC = () => {
-    const queryClient = useQueryClient(); // Initialize Query Client
     const { data, isLoading } = useQuery({
         queryKey: ["profile_data"],
         queryFn: getProfileData,
     });
 
-    const [modal, setModal] = useState<boolean>(false);
-    const [imageLink, setImageLink] = useState<string>("");
+    const emailHash = data
+        ? CryptoJS.MD5(data.email.trim().toLowerCase()).toString()
+        : "";
+    const gravatarUrl = emailHash
+        ? `https://www.gravatar.com/avatar/${emailHash}?s=200&d=identicon`
+        : "";
 
-    interface ProfileData {
-        cover_image: string;
-        username: string;
-        // Add other fields as necessary
-    }
-
-    function toggleModal() {
-        setModal(!modal);
-    }
-
-    // Handle Update
-    const handleUpdate = async () => {
-        if (!imageLink.trim()) {
-            alert("Please enter a valid image URL."); // Alert if input is empty
-            return;
-        }
-
-        const response = await fetch("http://localhost:4043/upload_profile", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ imageLink }), // Send as JSON
-            credentials: "include",
-        });
-
-        if (response.ok) {
-            notify_success("Updated Successfully!");
-
-            // Update the query data immediately with proper typing
-            queryClient.setQueryData<ProfileData>(
-                ["profile_data"],
-                (oldData) => {
-                    if (oldData) {
-                        return {
-                            ...oldData,
-                            cover_image: imageLink, // Update the cover_image with new link
-                        };
-                    }
-                    return oldData; // In case oldData is undefined (should not happen)
-                }
+    // Fetch Gravatar bio
+    const { data: gravatarData, isLoading: isGravatarLoading } = useQuery({
+        queryKey: ["gravatar_data", emailHash],
+        queryFn: async () => {
+            if (!emailHash) return null;
+            const response = await fetch(
+                `https://en.gravatar.com/${emailHash}.json`
             );
+            if (!response.ok) throw new Error("Failed to fetch Gravatar data");
+            return await response.json();
+        },
+        enabled: !!emailHash, // Only run if emailHash is available
+    });
 
-            // Optionally, refetch to ensure the server state is in sync
-            queryClient.invalidateQueries({
-                queryKey: ["profile_data"],
-            });
-        } else {
-            notify_error("Failed to Update");
-        }
+    const bio = gravatarData?.entry[0]?.aboutMe || "Nothing to say";
 
-        toggleModal(); // Close modal after submission
-    };
-
-    if (isLoading) {
+    if (isLoading || isGravatarLoading) {
         return (
             <div className="min-h-screen bg-gray-900 pb-20 dark:bg-gray-900 dark:text-gray-300">
                 {/* Cover Photo Skeleton */}
@@ -127,9 +93,9 @@ const ProfilePage: React.FC = () => {
                     <div className="absolute inset-0 bg-black opacity-70"></div>
                     <div className="absolute bottom-0 md:left-8 lg:left-16 p-4 z-10">
                         <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-green-700 overflow-hidden -mt-16">
-                            {data?.cover_image ? (
+                            {data?.email ? (
                                 <Image
-                                    src={`${data?.cover_image}`}
+                                    src={gravatarUrl}
                                     width={500}
                                     height={500}
                                     alt="Profile"
@@ -147,11 +113,10 @@ const ProfilePage: React.FC = () => {
                                 </Link>
                             )}
                         </div>
-                        <h1
-                            className="absolute -top-6 right-8 text-green-500 cursor-pointer"
-                            onClick={toggleModal}
-                        >
-                            <GrDocumentUpdate size={20} />
+                        <h1 className="absolute -top-6 right-8 text-green-500 cursor-pointer">
+                            <a href="https://gravatar.com/" target="_blank">
+                                <GrDocumentUpdate size={20} />
+                            </a>
                         </h1>
                         <h1 className="text-2xl font-bold text-white mt-2 ml-4 dark:text-gray-200">
                             {data?.username}
@@ -161,23 +126,19 @@ const ProfilePage: React.FC = () => {
             </div>
 
             {/* User Info */}
-            <div className="container mx-auto mt-8 px-4 sm:px-6 lg:px-8 ">
-                <div className="bg-white p-4 rounded-lg shadow dark:bg-slate-800 ">
+            <div className="container mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+                <div className="bg-white p-4 rounded-lg shadow dark:bg-slate-800">
                     <h2 className="text-xl font-bold mb-2 dark:text-gray-100">
                         About
                     </h2>
-                    <p className="text-gray-700 dark:text-gray-300">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Integer nec odio. Praesent libero. Sed cursus ante
-                        dapibus diam.
-                    </p>
+                    <p className="text-gray-700 dark:text-gray-300">{bio}</p>
                 </div>
             </div>
 
             {/* Posts */}
-            <div className="container mx-auto mt-8 px-4 sm:px-6 lg:px-8 ">
+            <div className="container mx-auto mt-8 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 ">
+                    <div className="lg:col-span-2">
                         <div className="bg-white p-4 rounded-lg shadow mb-6 dark:bg-slate-800">
                             <h2 className="text-xl font-bold mb-2 dark:text-gray-100">
                                 Posts
@@ -198,50 +159,6 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Modal Overlay */}
-            {modal && (
-                <>
-                    <div className="fixed inset-0 bg-gray-900 bg-opacity-65 pointer-events-auto"></div>
-                    <div className="fixed inset-0 flex justify-center items-center z-50">
-                        <div className="w-[600px] bg-gray-300 p-6 rounded-lg shadow-lg dark:bg-gray-800">
-                            <h2 className="text-xl font-bold mb-4 dark:text-gray-100">
-                                Update Profile Image
-                            </h2>
-                            <input
-                                type="text"
-                                placeholder="Enter Image URL"
-                                value={imageLink}
-                                onChange={(e) => setImageLink(e.target.value)}
-                                className="w-full p-2 border rounded mb-4 dark:bg-gray-600 dark:text-gray-200"
-                            />
-
-                            <button
-                                onClick={handleUpdate}
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                                Update
-                            </button>
-                            <button
-                                onClick={toggleModal}
-                                className="bg-red-500 text-white px-4 py-2 rounded ml-2"
-                            >
-                                Cancel
-                            </button>
-
-                            <div className="flex flex-col items-start justify-center p-2">
-                                <IoIosWarning
-                                    className="text-red-500"
-                                    size={25}
-                                />
-                                <span className="text-sm text-red-600 dark:text-red-400">
-                                    Please make sure the image URL is valid.
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            )}
         </div>
     );
 };

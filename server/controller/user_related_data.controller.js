@@ -3,28 +3,6 @@ const prisma = new PrismaClient();
 const path = require("path");
 const fs = require("fs"); // Use the promises API of fs
 
-async function upload_profile(req, res) {
-    try {
-        const { imageLink } = req.body; // Destructure to get imageLink
-        const user_id = req.user.id;
-
-        const update_user_cover = await prisma.user.update({
-            where: { id: user_id },
-            data: { cover_image: imageLink },
-        });
-
-        console.log("Image URL:", imageLink);
-        console.log("User ID:", user_id);
-
-        res.status(200).json({
-            message: "Updated successfully!",
-        });
-    } catch (error) {
-        console.error("Error in upload_profile:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-}
-
 // profile data
 async function profile_data(req, res) {
     try {
@@ -36,7 +14,6 @@ async function profile_data(req, res) {
             },
             select: {
                 username: true, // Select the username
-                cover_image: true, // Select the cover image
                 email: true, // Select the email
                 created_at: true, // Select the created at timestamp
                 role: true,
@@ -57,6 +34,5 @@ async function profile_data(req, res) {
 }
 
 module.exports = {
-    upload_profile,
     profile_data,
 };

@@ -37,7 +37,6 @@ model user {
 
 model manga_data {
   id                 String                            @id @default(uuid())
-  cover_image        String
   title              String
   alternative_titles String[]
   rating             Float                             @default(0.0)
