@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { GrUserSettings } from "react-icons/gr";
 import { SiDarkreader } from "react-icons/si";
 import { ImEyeBlocked } from "react-icons/im";
@@ -11,15 +11,16 @@ import { CiLogin, CiLogout } from "react-icons/ci";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getProfileData } from "@/api/api";
+import { RxDashboard } from "react-icons/rx";
 
 const SettingNav: React.FC = () => {
     const { data, isError } = useQuery({
         queryKey: ["profile_data"],
         queryFn: getProfileData,
         retry: false,
+        staleTime: 30000, // Cache for 30 seconds
+        gcTime: 60000, // Keep cache for 1 minute
     });
-
-    console.log(data);
 
     return (
         <div className="min-h-screen bg-blue-100 flex flex-col items-center dark:bg-slate-900">
@@ -52,6 +53,15 @@ const SettingNav: React.FC = () => {
                         </h1>
                     </div>
                 </Link>
+                {data?.role == "OWNER" && (
+                    <Link href="/settings/dashboard">
+                        <div className="w-full border-b-2 border-gray-200 h-12 flex items-center justify-between px-4 transition">
+                            <h1 className="flex items-center gap-2 text-blue-600 dark:text-gray-200">
+                                <RxDashboard size={24} /> Dashboard
+                            </h1>
+                        </div>
+                    </Link>
+                )}
                 <Link href="/settings/request-title">
                     <div className="w-full border-b-2 border-gray-200 h-12 flex items-center justify-between px-4 transition">
                         <h1 className="flex items-center gap-2 text-blue-600 dark:text-gray-200">

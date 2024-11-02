@@ -3,7 +3,6 @@ import React from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { getProfileData } from "@/api/api";
-import Link from "next/link";
 import { GrDocumentUpdate } from "react-icons/gr";
 import CryptoJS from "crypto-js";
 
@@ -11,30 +10,45 @@ const ProfilePage: React.FC = () => {
     const { data, isLoading } = useQuery({
         queryKey: ["profile_data"],
         queryFn: getProfileData,
+        staleTime: 30000,
+        gcTime: 500000,
     });
 
     const emailHash = data
         ? CryptoJS.MD5(data.email.trim().toLowerCase()).toString()
         : "";
-    const gravatarUrl = emailHash
-        ? `https://www.gravatar.com/avatar/${emailHash}?s=200&d=identicon`
-        : "";
 
-    // Fetch Gravatar bio
+    // Changed Gravatar URL to use the default image parameter correctly
+    const gravatarUrl = emailHash
+        ? `https://www.gravatar.com/avatar/${emailHash}?s=200&d=mp`
+        : "/images/lol.jpg";
+
+    // Modified Gravatar data fetch to handle 404 properly
     const { data: gravatarData, isLoading: isGravatarLoading } = useQuery({
         queryKey: ["gravatar_data", emailHash],
         queryFn: async () => {
             if (!emailHash) return null;
-            const response = await fetch(
-                `https://en.gravatar.com/${emailHash}.json`
-            );
-            if (!response.ok) throw new Error("Failed to fetch Gravatar data");
-            return await response.json();
+            try {
+                const response = await fetch(
+                    `https://en.gravatar.com/${emailHash}.json`
+                );
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        return null;
+                    }
+                    throw new Error("Failed to fetch Gravatar data");
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Gravatar fetch error:", error);
+                return null;
+            }
         },
-        enabled: !!emailHash, // Only run if emailHash is available
+        enabled: !!emailHash,
+        retry: false, // Prevent retrying on 404
     });
 
-    const bio = gravatarData?.entry[0]?.aboutMe || "Nothing to say";
+    const bio = gravatarData?.entry?.[0]?.aboutMe || "Nothing to say";
 
     if (isLoading || isGravatarLoading) {
         return (
@@ -88,38 +102,35 @@ const ProfilePage: React.FC = () => {
             <div className="w-full">
                 <div
                     className="relative h-64 bg-cover bg-center"
-                    style={{ backgroundImage: "url('/images/lol.jpg')" }}
+                    style={{
+                        backgroundImage: `url('${gravatarUrl}')`,
+                    }}
                 >
                     <div className="absolute inset-0 bg-black opacity-70"></div>
+                    {/* Gravatar icon positioned independently */}
+
                     <div className="absolute bottom-0 md:left-8 lg:left-16 p-4 z-10">
                         <div className="relative w-32 h-32 rounded-full border-4 border-white dark:border-green-700 overflow-hidden -mt-16">
-                            {data?.email ? (
-                                <Image
-                                    src={gravatarUrl}
-                                    width={500}
-                                    height={500}
-                                    alt="Profile"
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <Link href="/profile/upload_cover">
-                                    <Image
-                                        src="/images/lol.jpg"
-                                        width={500}
-                                        height={500}
-                                        alt="Profile"
-                                        className="w-full h-full object-cover"
-                                    />
-                                </Link>
-                            )}
+                            <Image
+                                src={gravatarUrl}
+                                width={500}
+                                height={500}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                                priority
+                            />
                         </div>
-                        <h1 className="absolute -top-6 right-8 text-green-500 cursor-pointer">
-                            <a href="https://gravatar.com/" target="_blank">
-                                <GrDocumentUpdate size={20} />
-                            </a>
-                        </h1>
-                        <h1 className="text-2xl font-bold text-white mt-2 ml-4 dark:text-gray-200">
-                            {data?.username}
+                        <h1 className="text-2xl font-bold text-white mt-2 ml-4 dark:text-gray-200 flex items-center justify-center">
+                            {data?.username}{" "}
+                            <div className="pl-6">
+                                <a
+                                    href="https://gravatar.com/"
+                                    target="_blank"
+                                    className="text-green-500 hover:text-green-400"
+                                >
+                                    <GrDocumentUpdate size={20} />
+                                </a>
+                            </div>
                         </h1>
                     </div>
                 </div>

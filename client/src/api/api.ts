@@ -1,5 +1,3 @@
-import { notify_error } from "@/utility/host_toast";
-
 const base_url = "http://localhost:4043";
 
 //getting profile data
@@ -19,7 +17,7 @@ export async function getProfileData() {
 
 //logout user
 export async function logoutUser() {
-    const response = await fetch("http://localhost:4043/logout", {
+    const response = await fetch(`${base_url}/logout`, {
         method: "POST",
         credentials: "include",
     });

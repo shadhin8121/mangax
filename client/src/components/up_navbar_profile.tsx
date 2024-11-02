@@ -17,7 +17,7 @@ const UpNavbarProfile: React.FC = () => {
     const emailHash = data?.email
         ? CryptoJS.MD5(data.email.trim().toLowerCase()).toString()
         : "";
-    const gravatarUrl = `https://www.gravatar.com/avatar/${emailHash}?s=200&d=identicon`;
+    const gravatarUrl = `https://www.gravatar.com/avatar/${emailHash}?s=200&d=mp`;
 
     return (
         <div>

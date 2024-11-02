@@ -20,7 +20,6 @@ enum Role {
 model user {
   id               String                            @id @default(uuid())
   username         String
-  cover_image      String?
   email            String                            @unique
   password         String
   role             Role                              @default(USER)
@@ -38,6 +37,7 @@ model user {
 model manga_data {
   id                 String                            @id @default(uuid())
   title              String
+  cover_image        String
   alternative_titles String[]
   rating             Float                             @default(0.0)
   release_date       DateTime?
