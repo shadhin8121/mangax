@@ -1,7 +1,7 @@
 // imports
 use axum::http::{header, HeaderValue, Method};
 use axum::Extension;
-use axum::{routing::post, Router};
+use axum::Router;
 use tower_http::cors::CorsLayer;
 
 //importing from my project

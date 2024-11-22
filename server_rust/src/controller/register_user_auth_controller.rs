@@ -97,13 +97,13 @@ pub async fn register_user(
 
     // Handle database insertion failure
     match new_user {
-        Ok(created_user) => Ok((
+        Ok(_) => Ok((
             StatusCode::CREATED, // Use CREATED (201) for successful creation
             Json(Message {
                 message: "user created successfully. now you can login.".to_string(),
             }), // Return the created user data
         )),
-        Err(e) => Err((
+        Err(_) => Err((
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(Message {
                 message: format!("Failed to create user."),
