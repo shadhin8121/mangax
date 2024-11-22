@@ -5,6 +5,7 @@ use axum::{routing::post, Router};
 use tower_http::cors::CorsLayer;
 
 //importing from my project
+use crate::route::user_auth_route::user_auth_route_fn;
 
 //mods
 mod controller;
@@ -37,9 +38,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     //main route entry point with CORS
     let app = Router::new()
-        .route("/", post(|| async { "hello world" }))
-        .layer(cors)
-        .layer(Extension(pool));
+        .merge(user_auth_route_fn())
+        .layer(Extension(pool))
+        .layer(cors);
 
     //port listener
     let listener = tokio::net::TcpListener::bind("0.0.0.0:4043").await.unwrap();

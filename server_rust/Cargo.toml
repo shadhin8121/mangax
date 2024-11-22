@@ -10,9 +10,10 @@ chrono = { version = "0.4.38", features = ["serde"] }
 dotenvy = "0.15.7"
 jsonwebtoken = "9.3.0"
 serde = { version = "1.0.215", features = ["derive"] }
-sqlx = { version = "0.8.2", features = ["postgres", "runtime-tokio-native-tls"] }
+sqlx = { version = "0.8.2", features = ["postgres", "runtime-tokio-native-tls", "uuid"] }
 tokio = { version = "1.41.1", features = ["full"] }
 tower = { version = "0.5.1", features = ["limit"] }
 tower-http = { version = "0.6.2", features = ["cors"] }
+uuid = { version = "1.11.0", features = ["serde", "v4"] }
 validator = { version = "0.19.0", features = ["derive"] }
 
