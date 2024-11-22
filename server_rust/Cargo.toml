@@ -1,0 +1,18 @@
+[package]
+name = "server_rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = { version = "0.7.9", features = ["macros"] }
+bcrypt = "0.16.0"
+chrono = { version = "0.4.38", features = ["serde"] }
+dotenvy = "0.15.7"
+jsonwebtoken = "9.3.0"
+serde = { version = "1.0.215", features = ["derive"] }
+sqlx = { version = "0.8.2", features = ["postgres", "runtime-tokio-native-tls"] }
+tokio = { version = "1.41.1", features = ["full"] }
+tower = { version = "0.5.1", features = ["limit"] }
+tower-http = { version = "0.6.2", features = ["cors"] }
+validator = { version = "0.19.0", features = ["derive"] }
+
